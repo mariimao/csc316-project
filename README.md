@@ -7,7 +7,7 @@ Data was pulled on: 2025-10-07
 
 
 # Netflix top 10
-https://www.netflix.com/tudum/top10
+- https://www.netflix.com/tudum/top10
 ## 2025-10-07_global_alltime.tsv (global lists)
 | week       | category        | weekly_rank | show_title          | season_title | weekly_hours_viewed | runtime | weekly_views | cumulative_weeks_in_top_10 |
 |-------------|-----------------|--------------|----------------------|---------------|----------------------|----------|---------------|-----------------------------|
@@ -30,7 +30,7 @@ https://www.netflix.com/tudum/top10
 
 
 # IMDB
-https://datasets.imdbws.com
+- https://datasets.imdbws.com
 
 > (Files are too big to use on github so you will need to decompress them locally)
 
@@ -54,8 +54,8 @@ https://datasets.imdbws.com
 
 
 # TMDB
-https://www.kaggle.com/datasets/asaniczka/full-tmdb-tv-shows-dataset-2023-150k-shows
-https://www.kaggle.com/datasets/asaniczka/full-tmdb-tv-shows-dataset-2023-150k-shows
+- https://www.kaggle.com/datasets/asaniczka/tmdb-movies-dataset-2023-930k-movies
+- https://www.kaggle.com/datasets/asaniczka/full-tmdb-tv-shows-dataset-2023-150k-shows
 
 ## TMDB_movie_dataset_v11.tsv
 | id     | title        | vote_average | vote_count | status   | release_date | revenue   | runtime | adult | backdrop_path                              | budget     | homepage                                      | imdb_id    | original_language | original_title | overview | popularity | poster_path                              | tagline                                       | genres                                 | production_companies                          | production_countries                          | spoken_languages                          | keywords |
