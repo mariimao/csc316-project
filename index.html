@@ -1,0 +1,62 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Are You Bored?</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Are You Bored?</h1>
+
+      <h2>Tired of scrolling endlessly on Netflix? We get it!</h2>
+
+      <p>
+        Skip the scroll time and get straight to binge-watching. We got you!
+      </p>
+      <div class="platform-logos">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+          alt="Netflix logo"
+        />
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Disney%2B_logo.svg"
+          alt="Disney+ logo"
+        />
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/f/f1/Prime_Video.png"
+          alt="Prime Video logo"
+        />
+      </div>
+    </header>
+
+    <section>
+      <h2>🌍 See what people around the world are binging!</h2>
+      <canvas id="worldChart" class="map"></canvas>
+      <!-- <div id="worldChart" class="map"></div> -->
+    </section>
+
+    <section>
+      <h2>🎬 See most popular genres!</h2>
+      <canvas id="bubbleChart" class="bubble-chart"></canvas>
+      <!-- <div id="bubbleChart" class="bubble-chart"></div> -->
+    </section>
+
+    <section>
+      <h2>📈 See rising popular shows!</h2>
+      <canvas id="trendChart" class="trending-chart"></canvas>
+      <!-- <div id="trendChart" class="trending-chart"></div> -->
+    </section>
+
+    <section>
+      <h2>💬 Tell us what you like and we'll match you to a show!</h2>
+      <div class="search-box">
+        <input type="text" id="userInput" placeholder="I like K-dramas..." />
+        <button id="searchBtn">Search!</button>
+      </div>
+      <p id="result"></p>
+    </section>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
