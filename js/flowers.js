@@ -44,7 +44,7 @@ function drawFlowers(flowers) {
     g.append("text")
         .attr("x", innerW/2).attr("y", -30)
         .attr("text-anchor", "middle")
-        .style("font-size","18px").style("font-weight",700).style("fill","#ffffffff")
+        .style("font-size","18px").style("font-weight",700)
         .text("Production Company and the Genres They Explored as Flowers");
     
     g.append("text")
@@ -64,7 +64,7 @@ function drawFlowers(flowers) {
     flowerG.append("line")
         .attr("y1", 0)
         .attr("y2", d => -stemH(d.total))
-        .attr("stroke", "#c4c4c4ff")
+        .attr("stroke", "#333")
         .attr("stroke-width", 2)
         .attr("stroke-linecap", "round");
 
