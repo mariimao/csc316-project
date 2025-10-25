@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CSC316 Spectrum</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="curtain-stage" id="curtainStage">
+      <div class="curtain left" id="curtainLeft"></div>
+      <div class="curtain right" id="curtainRight"></div>
+      <button class="open-hint" id="openHint" aria-label="Open curtains">
+        Scroll to open ↓
+      </button>
+    </div>
+
+    <main class="reveal-content">
+      <section class="hero">
+        <div class="container-fluid">
+          <div class="curtain-billboard">
+          <div class="sponsor">
+            brought to you by <strong>Spectrum Film Festival</strong>
+          </div>
+          <h2 class="billboard-title">
+            A closer look into the stories we crave
+          </h2>
+          <div class="billboard-sub">
+            what genres say about us and the world
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="container">
+          <div class="genre-selector w-100" id="genreSelector">
+            <div class="selector-inner d-flex align-items-center w-100">
+              <label for="genreSearch" class="genre-label mb-0 me-2">Pick your favourite genre</label>
+              <input id="genreSearch" class="genre-search form-control me-3" type="search" placeholder="Search genres or tap an option" aria-label="Search genres" />
+
+              <div class="genre-chips d-flex flex-wrap" id="genreChips">
+                <button type="button" class="genre-chip chip btn btn-sm me-2 mb-2" data-genre="horror">Horror</button>
+                <button type="button" class="genre-chip chip btn btn-sm me-2 mb-2" data-genre="romcom">Romantic Comedy</button>
+                <button type="button" class="genre-chip chip btn btn-sm me-2 mb-2" data-genre="kdrama">K-Drama</button>
+                <button type="button" class="genre-chip chip btn btn-sm me-2 mb-2" data-genre="truecrime">True Crime</button>
+                <button type="button" class="genre-chip chip btn btn-sm me-2 mb-2" data-genre="superhero">Superhero</button>
+              </div>
+            </div>
+          </div>
+        <article class="stage">
+          <h2>Why genres matter</h2>
+          <p class="goal">
+            Stories shape how we see the world. This section introduces the
+            question: how do different genres tap into shared emotions and
+            cultural patterns? Choose a genre above or search to begin.
+          </p>
+
+          <div class="hero-question" aria-label="Hero question">
+            <h3>
+              “Why do some of us love horror while others can’t get enough of
+              romantic comedies?”
+            </h3>
+          </div>
+          <h2> Popular Genres</h2>
+          <p>Explore the top ten most popular genres worldwide!</p>
+          <div class="visual placeholder" id="expositionVisual">
+            <div id="bubbleChart" class="bubble-chart"></div>
+          </div>
+        </article>
+
+        <article class="stage">
+          <h2>What genres represent — a global view</h2>
+          <p class="goal">
+            Genres are shorthand for emotional experiences. Below are common
+            genres with a short note about what they promise viewers. Click a
+            card to explore its audience trends.
+          </p>
+
+          <!-- <div class="genre-explorer">
+            <div class="genre-card" data-genre="horror">
+              <strong>Horror</strong>
+              <div class="card-examples">
+                Core: fear, catharsis — Examples: Hereditary, Train to Busan
+              </div>
+            </div>
+            <div class="genre-card" data-genre="romcom">
+              <strong>Romantic Comedy</strong>
+              <div class="card-examples">
+                Core: warmth & connection — Examples: When Harry Met Sally
+              </div>
+            </div>
+            <div class="genre-card" data-genre="kdrama">
+              <strong>K-Drama</strong>
+              <div class="card-examples">
+                Core: melodrama & relationship arcs — Examples: Crash Landing on
+                You
+              </div>
+            </div>
+          </div> -->
+
+          <div class="genre-visual placeholder" id="genreVisual" aria-hidden="true">
+            <div class="placeholder__label">
+              Audience share & streaming trends (placeholder)
+            </div>
+          </div>
+
+          <div class="global-genre-map placeholder" id="globalGenreMap">
+            <div class="placeholder__label">
+              Map of dominant genres by region (placeholder)
+            </div>
+          </div>
+        </article>
+
+        <article class="stage">
+          <h2>How the industry responds</h2>
+          <p class="goal">
+            Studios and streamers make decisions based on audience demand:
+            greenlighting local productions, investing in hits, and pursuing
+            cross-border remakes. Use the dashboard below to compare how
+            platforms invest across genres.
+          </p>
+
+          <div class="company-dashboard placeholder" id="companyDashboard">
+            <div class="placeholder__label">
+              Platform investments & top local productions (placeholder)
+            </div>
+          </div>
+
+          <div class="timeline placeholder" id="industryTimeline">
+            <div class="placeholder__label">
+              Timeline of strategic investments (placeholder)
+            </div>
+          </div>
+        </article>
+
+        <article class="stage">
+          <h2>What this means for you</h2>
+          <h2 class="subtitle">
+            Tell us what genres you like and we'll generate an insight on you!
+          </h2>
+
+          <div class="search-box">
+            <input
+              type="text"
+              id="userInput"
+              placeholder="I like K-dramas..."
+              aria-label="Describe your taste"
+            />
+            <button id="searchBtn">Generate!</button>
+          </div>
+
+          <p id="result" class="insight-placeholder">
+            Your personalized insight will appear here
+          </p>
+          <p class="goal">
+            Reflect: your favorite stories connect you to cultural
+            conversations. Below are personalized insights and a world heatmap
+            showing audiences with similar tastes. Share your results with
+            friends.
+          </p>
+
+          <div class="user-insight placeholder" id="userInsight">
+            <div class="placeholder__label">
+              Personal insight panel (placeholder)
+            </div>
+          </div>
+
+          <div class="world-heatmap placeholder" id="worldHeatmap">
+            <div class="placeholder__label">
+              Global heatmap of similar audiences (placeholder)
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script src="visualizations/viz1.js"></script>
+  </body>
+</html>

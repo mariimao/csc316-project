@@ -1,0 +1,464 @@
+:root {
+  --bg: #000000;
+  --panel: rgba(255, 255, 255, 0.03);
+  --muted: rgba(255, 255, 255, 0.55);
+  --accent: #ffd780;
+  --curtain-red-1: #4b0202;
+  --curtain-red-2: #3a0202;
+  --curtain-red-3: #250101;
+  --max-width: 1100px;
+}
+
+/* Reset and base */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+  color: #fff;
+  background: var(--bg);
+}
+
+/* Page layout */
+.reveal-content {
+  min-height: 200vh;
+  background: linear-gradient(180deg, #000 0%, var(--bg) 40%, #111 100%);
+}
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 2rem;
+}
+.hero h1 {
+  font-size: 3rem;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.06em;
+}
+.hero p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+.content {
+  padding: 4rem 2rem;
+  background: #000;
+  color: #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.content h2 {
+  color: var(--accent);
+}
+.stage {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto 2.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cards and small UI blocks */
+.card-min {
+  min-width: 180px;
+  max-width: 320px;
+  padding: 14px 18px;
+  background: var(--panel);
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Genre selector (sticky) - keep structure minimal so Bootstrap utilities can be used */
+.genre-selector {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  backdrop-filter: blur(6px) saturate(120%);
+}
+.selector-inner {
+  width: 100%;
+  max-width: var(--max-width);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+.genre-search {
+  flex: 1 1 320px;
+  min-width: 180px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  color: #fff;
+}
+.genre-search::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+.genre-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.chip {
+  background: var(--panel);
+  color: #fff;
+  border: 0;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.chip:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.chip.selected {
+  background: var(--accent);
+  color: #111;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* Generic placeholder area for visualizations. Keep this simple: drop a <canvas>, <svg>, or a React/Vue mount point inside. */
+.placeholder {
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: 420px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.006),
+    rgba(255, 255, 255, 0.003)
+  );
+  border: 1px dashed rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.98rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  position: relative;
+}
+.placeholder--compact {
+  min-height: 320px;
+}
+.placeholder__label {
+  pointer-events: none;
+  color: var(--muted);
+}
+
+/* Visualization helper: let visualizations fill the placeholder container easily */
+.viz-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.viz-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 800px) {
+  .placeholder {
+    min-height: 320px;
+    padding: 1rem;
+  }
+}
+
+/* Curtain stage and visuals (kept intentionally specific) */
+.curtain-stage {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+.curtain {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transform: translateX(0);
+  transition: transform 400ms cubic-bezier(0.22, 0.9, 0.35, 1);
+  pointer-events: auto;
+}
+.curtain.left {
+  left: 0;
+}
+.curtain.right {
+  right: 0;
+}
+
+/* Rich curtain texture kept as original intent but minimized */
+.curtain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--curtain-red-1) 0%,
+    var(--curtain-red-2) 35%,
+    var(--curtain-red-3) 100%
+  );
+  box-shadow: inset 0 -60px 80px rgba(0, 0, 0, 0.6);
+}
+.curtain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05) 0 2px,
+    transparent 2px 12px
+  );
+  opacity: 0.25;
+}
+.curtain.left::before,
+.curtain.right::before {
+  background-image: radial-gradient(
+      1200px 200px at 20% 10%,
+      rgba(255, 255, 255, 0.03),
+      transparent 10%
+    ),
+    radial-gradient(
+      1200px 200px at 80% 20%,
+      rgba(0, 0, 0, 0.07),
+      transparent 15%
+    ),
+    linear-gradient(
+      180deg,
+      var(--curtain-red-1) 0%,
+      var(--curtain-red-2) 35%,
+      var(--curtain-red-3) 100%
+    );
+  background-repeat: no-repeat;
+  background-blend-mode: multiply, overlay, normal;
+}
+
+.curtain-rod {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(90deg, #2b2b2b, #111);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  pointer-events: none;
+}
+
+@keyframes spotlight-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.01);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.curtain-spotlight {
+  animation: spotlight-pulse 3000ms ease-in-out infinite;
+}
+
+.open-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 0;
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  pointer-events: auto;
+  z-index: 10003;
+  opacity: 0.95;
+}
+.curtain.open-left {
+  transform: translateX(-110%);
+}
+.curtain.open-right {
+  transform: translateX(110%);
+}
+
+.curtain-billboard {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  z-index: 10002;
+  pointer-events: none;
+  transition: opacity 360ms ease, transform 360ms ease;
+}
+.curtain-billboard .sponsor {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0.95;
+  margin-bottom: 8px;
+  text-transform: lowercase;
+  letter-spacing: 0.06em;
+}
+.curtain-billboard .sponsor strong {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.curtain-billboard .billboard-title {
+  font-size: clamp(18px, 3.4vw, 36px);
+  line-height: 1.05;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), 0 1px 0 rgba(255, 255, 255, 0.02);
+  font-weight: 700;
+  max-width: 86%;
+}
+.curtain-billboard .billboard-sub {
+  margin-top: 8px;
+  font-size: clamp(12px, 1.6vw, 16px);
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0.95;
+}
+
+/* custom cursor + helpers */
+.curtain,
+.curtain-billboard {
+  cursor: none;
+}
+.use-custom-cursor {
+  cursor: none;
+}
+.use-custom-cursor input,
+.use-custom-cursor textarea,
+.use-custom-cursor select,
+.use-custom-cursor button {
+  cursor: auto;
+}
+.custom-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 10005;
+  transform: translate(-50%, -50%);
+  transition: width 160ms ease, height 160ms ease, background 160ms ease,
+    opacity 160ms ease, filter 160ms ease;
+  border-radius: 50%;
+  opacity: 0;
+}
+.custom-cursor.cursor--big {
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(255, 254, 214, 0.75) 0%,
+    rgba(255, 254, 214, 0.6) 18%,
+    rgba(255, 254, 214, 0.14) 40%,
+    transparent 60%
+  );
+  filter: blur(20px);
+  mix-blend-mode: screen;
+  opacity: 0.98;
+}
+.custom-cursor.cursor--small {
+  width: 18px;
+  height: 18px;
+  background-color: rgba(255, 254, 214, 0.95);
+  filter: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  mix-blend-mode: normal;
+  opacity: 0.98;
+}
+.custom-cursor.cursor--hidden {
+  opacity: 0 !important;
+}
+
+.curtain-stage[aria-hidden="true"] .curtain-billboard {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+}
+.curtain-stage[aria-hidden="true"] .curtain-spotlight {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.85);
+}
+
+@media (max-width: 480px) {
+  .curtain-billboard .billboard-title {
+    font-size: 20px;
+  }
+  .curtain-billboard .sponsor {
+    font-size: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin: 1em 0;
+  width: 500px;
+}
+
+#userInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+#searchBtn {
+  padding: 10px 16px;
+  background-color: #ffd780;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#searchBtn:hover {
+  background-color: #ffd780df;
+}
+
