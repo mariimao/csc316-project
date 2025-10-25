@@ -23,6 +23,15 @@ export function initCustomCursor() {
       cursor.classList.remove('cursor--big', 'cursor--hidden');
       cursor.classList.add('cursor--small');
     }
+    // Ensure the native cursor state matches visibility of the custom cursor.
+    // Some platforms/browsers can show unexpected cursors if the stylesheet
+    // hides the native cursor but the custom element is invisible. Explicitly
+    // set body.style.cursor so behavior is deterministic.
+    if (cursor.classList.contains('cursor--hidden')) {
+      document.body.style.cursor = '';
+    } else {
+      document.body.style.cursor = 'none';
+    }
   }
 
   function onMouseMove(e) { updateCursorState(e.clientX, e.clientY); }
@@ -49,6 +58,8 @@ export function initCustomCursor() {
     if (mo) mo.disconnect();
     if (cursor && cursor.parentNode) cursor.parentNode.removeChild(cursor);
     document.body.classList.remove('use-custom-cursor');
+    // restore native cursor
+    document.body.style.cursor = '';
   }
 
   return { destroy };
