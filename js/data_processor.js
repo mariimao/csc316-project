@@ -1,78 +1,98 @@
+// Assisted by ChatGPT 5
+
+let tmdbMovies = [];
+
 function loadData() {
-    d3.tsv("tmdb/TMDB_movie_dataset_v11.tsv", (data) => {
-        let tmdbMovies = prepareDataForTMDBMovies(data);
-    })
+    d3.tsv("tmdb/tmdb_movies_reduced.tsv", d3.autoType)
+        .then(raw => {
+            tmdbMovies = prepareMovies(raw);
+            console.log("movies:", tmdbMovies.length);
+            // Placeholder companies (this data should come from user's choice)
+            const companies = ["Marvel Studios", "Warner Bros. Pictures", "Paramount"];
+            const flowers = buildFlowers(companies, tmdbMovies);
+            console.log(flowers);
+            drawFlowers(flowers)
+        })
+        .catch(console.error);
 }
 
-// Helper function to prepare data for tmdb/TMDB_movie_dataset_v11.tsv
-function prepareDataForTMDBMovies(data) {
-    data.forEach(d => {
-        // id	title	vote_average	vote_count	(-)status	release_date	revenue	runtime	(-)adult	(-)backdrop_path	budget
-        // homepage	(-)imdb_id	original_language	(-)original_title	(-)overview	popularity	poster_path	(-)tagline	genres
-        // production_companies	production_countries	spoken_languages	keywords
+// Prepare movie data
+function prepareMovies(rows) {
+    const parseList = (v) => {
+        if (Array.isArray(v)) return v.map(s => String(s).trim());
+        if (v == null) return [];
+        const s = String(v).trim();
+        if ((s.startsWith("[") && s.endsWith("]")) || (s.startsWith("{") && s.endsWith("}"))) {
+            try {
+                const arr = JSON.parse(s);
+                if (Array.isArray(arr)) return arr.map(x => String(x).trim());
+            } catch (e) {}
+        }
+        return s === "" ? [] : s.split("|").map(x => x.trim()).filter(Boolean);
+    };
+    
+    rows.forEach(d => {
         d.id = +d.id;
-        // d.title
-        d.vote_average = +d.vote_average;
-        d.vote_count = +d.vote_count;
-        // dropped d.status
-        d.release_date = d.release_date ? new Date(d.release_date) : null;
-        d.revenue = +d.revenue;
-        d.runtime = +d.runtime;
-        // dropped adult
-        // dropped backdrop_path
-        d.budget = +d.budget;
-        // d.homepage
-        // dropped imdb_id
-        // d.original_language
-        // dropped original_title
-        // dropped overview
-        d.popularity = +d.popularity;
-        // d.poster_path
-        // dropped tagline
-        // d.genres
-        // d.production_companies
-        // d.production_countries
-        // d.spoken_languages
-        // d.keywords
+        d.vote_average  = +d.vote_average;
+        d.vote_count    = +d.vote_count;
+        d.release_date  = d.release_date ? new Date(d.release_date) : null;
+        d.revenue       = +d.revenue;
+        d.runtime       = +d.runtime;
+        d.budget        = +d.budget;
+        d.popularity    = +d.popularity;
+        d.genres                = parseList(d.genres);
+        d.production_companies  = parseList(d.production_companies);
     });
-    return data;
+    return rows;
 }
 
-function prepareDataForTMDBShows(data) {
-    data.forEach(d => {
-        // id	name	number_of_seasons	number_of_episodes	original_language	vote_count	vote_average	(-)overview	(-)adult
-        // (-)backdrop_path	first_air_date	last_air_date	homepage	(-)in_production	(-)original_name	popularity
-        // poster_path	type	(-)status	(-)tagline	genres	created_by	languages	networks	origin_country	spoken_languages
-        // production_companies	production_countries	episode_run_time
-        d.id = +id;
-        // d.name
-        d.number_of_seasons = +d.number_of_seasons;
-        d.number_of_episodes = +d.number_of_episodes;
-        // d.original_language
-        d.vote_count = +d.vote_count;
-        d.vote_average = +d.vote_average;
-        // drop overview
-        // drop adult
-        // drop backdrop_path
-        d.first_air_date = d.first_air_date ? new Date(d.first_air_date) : null;
-        d.last_air_date = d.last_air_date ? new Date(d.last_air_date) : null;
-        // d.homepage
-        // drop in_production
-        // drop original_name
-        d.popularity = +d.popularity;
-        // d.poster_path
-        // d.type
-        // drop status
-        // drop tagline
-        // d.genres
-        // d.created_by
-        // d.languages
-        // d.networks
-        // d.origin_country
-        // d.spoken_languages
-        // d.production_companies
-        // d.production_countries
-        d.episode_run_time = +d.episode_run_time;
-    })
-    return data;
+/*
+Return flowers in the structure of
+[
+    {company: ..., total: total number of genres, petals: [{genre: genreName, score: normalized average popularity of the genres}, ...]},
+]
+ */
+function buildFlowers(companyList, movies) {
+    const norm = s => s.toLowerCase().trim();
+    const wanted = new Map(companyList.map(c => [norm(c), c])); // norm => 原名
+    
+    const acc = new Map(companyList.map(c => [c, { total: 0, genreCount: new Map() }]));
+    
+    for (const m of movies) {
+        if (!m.production_companies || m.production_companies.length === 0) continue;
+        const genres = (m.genres && m.genres.length) ? m.genres : [];
+        for (const compRaw of m.production_companies) {
+            const key = norm(compRaw);
+            const canonical = wanted.get(key);
+            if (!canonical) continue;
+            const obj = acc.get(canonical);
+            obj.total += 1;
+            for (const g of genres) {
+                obj.genreCount.set(g, (obj.genreCount.get(g) || 0) + 1);
+            }
+        }
+    }
+    
+    const flowers = [];
+    for (const company of companyList) {
+        const { total, genreCount } = acc.get(company);
+        const totalGenres = Array.from(genreCount.values()).reduce((a, b) => a + b, 0);
+        
+        let petals = [];
+        if (totalGenres > 0) {
+            for (const [genre, cnt] of genreCount.entries()) {
+                const share = cnt / totalGenres;             // [0,1]
+                const score = share * 2 - 1;                 // [-1,1]
+                petals.push({ genre, score });
+            }
+            petals.sort((a, b) => d3.descending(a.score, b.score));
+            petals = petals.slice(0, 10); // restrict number of petals for usability purposes
+        }
+        
+        flowers.push({ company, total, petals });
+    }
+    
+    return flowers;
 }
+
+loadData();
