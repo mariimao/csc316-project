@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Genre Spiral Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        #spiral-viz {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .spiral-path {
+            fill: none;
+            stroke-width: 20;
+            stroke-linecap: round;
+            transition: stroke-width 0.3s;
+        }
+
+        .spiral-path:hover {
+            stroke-width: 25;
+            cursor: pointer;
+        }
+
+        .genre-label {
+            font-size: 12px;
+            font-weight: bold;
+            pointer-events: none;
+            text-anchor: middle;
+        }
+
+        .time-label {
+            font-size: 10px;
+            fill: #666;
+            text-anchor: middle;
+        }
+
+        .center-label {
+            font-size: 24px;
+            font-weight: bold;
+            text-anchor: middle;
+            fill: #000;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #000;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            background: #E50914;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #b8070f;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Netflix Genre & Keyword Spiral Over Time</h1>
+    <p class="subtitle">Which genres and keywords are most common at different times?</p>
+
+    <div class="controls">
+        <button class="control-btn" onclick="animateSpiral()">🔄 Animate</button>
+        <button class="control-btn" onclick="resetSpiral()">↺ Reset</button>
+    </div>
+
+    <svg id="spiral-viz" width="800" height="800"></svg>
+
+    <div class="legend" id="legend"></div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+    // Sample data: genres/keywords over time
+    const timelineData = [
+        { time: 'Jan', genre: 'Drama', keyword: 'family', popularity: 85 },
+        { time: 'Feb', genre: 'Romance', keyword: 'love', popularity: 78 },
+        { time: 'Mar', genre: 'Action', keyword: 'adventure', popularity: 82 },
+        { time: 'Apr', genre: 'Comedy', keyword: 'friendship', popularity: 75 },
+        { time: 'May', genre: 'Thriller', keyword: 'mystery', popularity: 88 },
+        { time: 'Jun', genre: 'Sci-Fi', keyword: 'future', popularity: 70 },
+        { time: 'Jul', genre: 'Horror', keyword: 'suspense', popularity: 80 },
+        { time: 'Aug', genre: 'Documentary', keyword: 'truth', popularity: 65 },
+        { time: 'Sep', genre: 'Action', keyword: 'hero', popularity: 90 },
+        { time: 'Oct', genre: 'Horror', keyword: 'fear', popularity: 92 },
+        { time: 'Nov', genre: 'Drama', keyword: 'emotion', popularity: 87 },
+        { time: 'Dec', genre: 'Romance', keyword: 'holiday', popularity: 95 }
+    ];
+
+    // Genre color mapping
+    const genreColors = {
+        'Drama': '#8B0000',
+        'Romance': '#DC143C',
+        'Action': '#000000',
+        'Comedy': '#FF8C00',
+        'Thriller': '#800080',
+        'Sci-Fi': '#00CED1',
+        'Horror': '#8B008B',
+        'Documentary': '#2E8B57'
+    };
+
+    // Setup SVG
+    const svg = d3.select('#spiral-viz');
+    const width = 800;
+    const height = 800;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    const g = svg.append('g')
+        .attr('transform', `translate(${centerX}, ${centerY})`);
+
+    // Tooltip
+    const tooltip = d3.select('#tooltip');
+
+    // Spiral parameters
+    const numCoils = 3;
+    const maxRadius = 300;
+    const segments = timelineData.length;
+
+    // Generate spiral points
+    function spiralPoint(t, startRadius, endRadius) {
+        const angle = t * numCoils * 2 * Math.PI;
+        const radius = startRadius + (endRadius - startRadius) * t;
+        return {
+            x: radius * Math.cos(angle),
+            y: radius * Math.sin(angle),
+            angle: angle
+        };
+    }
+
+    // Create spiral segments
+    const spiralGroup = g.append('g').attr('class', 'spiral-group');
+
+    timelineData.forEach((d, i) => {
+        const t0 = i / segments;
+        const t1 = (i + 1) / segments;
+        const startRadius = 30;
+
+        // Generate path points
+        const points = [];
+        const resolution = 20;
+        for (let j = 0; j <= resolution; j++) {
+            const t = t0 + (t1 - t0) * (j / resolution);
+            points.push(spiralPoint(t, startRadius, maxRadius));
+        }
+
+        // Create path
+        const lineGenerator = d3.line()
+            .x(p => p.x)
+            .y(p => p.y)
+            .curve(d3.curveCardinal);
+
+        const path = spiralGroup.append('path')
+            .datum(points)
+            .attr('class', 'spiral-path')
+            .attr('d', lineGenerator)
+            .attr('stroke', genreColors[d.genre])
+            .attr('stroke-width', 0)
+            .attr('opacity', 0.85)
+            .on('mouseover', function(event) {
+                d3.select(this).attr('opacity', 1);
+                tooltip
+                    .style('opacity', 1)
+                    .html(`
+                            <strong>${d.time}</strong><br>
+                            Genre: ${d.genre}<br>
+                            Keyword: ${d.keyword}<br>
+                            Popularity: ${d.popularity}%
+                        `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 10) + 'px');
+            })
+            .on('mouseout', function() {
+                d3.select(this).attr('opacity', 0.85);
+                tooltip.style('opacity', 0);
+            });
+
+        // Add genre label
+        const midPoint = spiralPoint((t0 + t1) / 2, startRadius, maxRadius);
+        const labelAngle = midPoint.angle + Math.PI / 2;
+
+        g.append('text')
+            .attr('class', 'genre-label')
+            .attr('x', midPoint.x)
+            .attr('y', midPoint.y)
+            .attr('transform', `rotate(${labelAngle * 180 / Math.PI}, ${midPoint.x}, ${midPoint.y})`)
+            .attr('fill', genreColors[d.genre])
+            .attr('opacity', 0)
+            .text(d.genre);
+
+        // Add keyword label (smaller, inside)
+        const keywordPoint = spiralPoint((t0 + t1) / 2, startRadius - 10, maxRadius - 20);
+        g.append('text')
+            .attr('class', 'time-label')
+            .attr('x', keywordPoint.x)
+            .attr('y', keywordPoint.y)
+            .attr('opacity', 0)
+            .text(d.keyword);
+    });
+
+    // Center labels
+    g.append('text')
+        .attr('class', 'center-label')
+        .attr('y', -5)
+        .text('2024');
+
+    g.append('text')
+        .attr('class', 'time-label')
+        .attr('y', 15)
+        .text('Timeline');
+
+    // Create legend
+    const legend = d3.select('#legend');
+    Object.entries(genreColors).forEach(([genre, color]) => {
+        const item = legend.append('div').attr('class', 'legend-item');
+        item.append('div')
+            .attr('class', 'legend-color')
+            .style('background-color', color);
+        item.append('span').text(genre);
+    });
+
+    // Animation function
+    function animateSpiral() {
+        // Animate stroke width
+        svg.selectAll('.spiral-path')
+            .transition()
+            .duration(300)
+            .delay((d, i) => i * 100)
+            .attr('stroke-width', 20);
+
+        // Animate labels
+        svg.selectAll('.genre-label, .time-label')
+            .transition()
+            .duration(300)
+            .delay((d, i) => i * 100)
+            .attr('opacity', 1);
+    }
+
+    // Reset function
+    function resetSpiral() {
+        svg.selectAll('.spiral-path')
+            .transition()
+            .duration(300)
+            .attr('stroke-width', 0);
+
+        svg.selectAll('.genre-label, .time-label')
+            .transition()
+            .duration(300)
+            .attr('opacity', 0);
+    }
+
+    // Auto-animate on load
+    setTimeout(animateSpiral, 500);
+</script>
+</body>
+</html>
