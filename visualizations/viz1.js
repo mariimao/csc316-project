@@ -7,7 +7,7 @@ const svg = d3.select("#bubbleChart")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-    .style("background-color", "#ddddddf7");
+    .style("background-color", "#000000");
 
 d3.tsv("tmdb/tmdb_tv_reduced.tsv").then(data => {
     const genreCounts = {};
@@ -27,11 +27,9 @@ d3.tsv("tmdb/tmdb_tv_reduced.tsv").then(data => {
 
     genresArray = genresArray
         .sort((a, b) => b.count - a.count)
-        .slice(0, 12);
+        .slice(0, 10);
 
-    const color = d3.scaleOrdinal()
-        .domain(genresArray.map(d => d.genre))
-        .range(d3.schemeSet3);
+    const color = d3.scaleOrdinal(d3.schemeTableau10);
 
     const radiusScale = d3.scaleSqrt()
         .domain([0, d3.max(genresArray, d => d.count)])
@@ -70,7 +68,7 @@ d3.tsv("tmdb/tmdb_tv_reduced.tsv").then(data => {
         .attr("dy", ".35em")
         .style("font-size", "13px")
         .style("font-family", "sans-serif")
-        .style("fill", "#333")
+        .style("fill", "#ffffffff")
         .style("pointer-events", "none");
 
     nodes.append("title")
@@ -87,13 +85,14 @@ d3.tsv("tmdb/tmdb_tv_reduced.tsv").then(data => {
         .attr("width", legendRectSize)
         .attr("height", legendRectSize)
         .attr("fill", d => color(d.genre))
-        .attr("stroke", "#555");
+        .attr("stroke", "#ffffffff");
 
     legend.append("text")
         .attr("x", legendRectSize + 2)
         .attr("y", legendRectSize - 4)
         .style("font-size", "13px")
         .style("font-family", "sans-serif")
+        .style("fill", "#ffffffff")
         .text(d => d.genre);
 
     svg.append("text")
@@ -102,6 +101,6 @@ d3.tsv("tmdb/tmdb_tv_reduced.tsv").then(data => {
         .attr("text-anchor", "end")
         .style("font-size", "12px")
         .style("font-family", "sans-serif")
-        .style("fill", "#666")
+        .style("fill", "#ffffffff")
         .text("Data source: TMDB");
 });
