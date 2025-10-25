@@ -432,3 +432,33 @@ body {
     font-size: 2rem;
   }
 }
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin: 1em 0;
+  width: 500px;
+}
+
+#userInput {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+#searchBtn {
+  padding: 10px 16px;
+  background-color: #ffd780;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#searchBtn:hover {
+  background-color: #ffd780df;
+}
+
