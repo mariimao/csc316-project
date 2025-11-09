@@ -1,3 +1,8 @@
+/**
+ * Bubble Chart Visualization
+ * Displays the top 10 most popular TV genres as a force-directed bubble chart
+ */
+
 const width = 800;
 const height = 500;
 const legendRectSize = 18;
@@ -104,3 +109,4 @@ d3.tsv("data/tmdb/tmdb_tv_reduced.tsv").then(data => {
         .style("fill", "#ffffffff")
         .text("Data source: TMDB");
 });
+
