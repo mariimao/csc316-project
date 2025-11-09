@@ -114,9 +114,45 @@ function buildFlowers(companyList, movies) {
  * Draw the flowers visualization
  */
 function drawFlowers(flowers) {
-    const W = 1100, H = 560, margin = {top: 80, right: 40, bottom: 80, left: 60};
+    // Get container dimensions for responsive sizing
+    const container = d3.select("#garden").node();
+    let containerWidth = 1100;
+    let containerHeight = 560;
+    
+    if (container) {
+        containerWidth = container.clientWidth || container.offsetWidth || window.innerWidth - 40;
+        containerHeight = container.clientHeight || container.offsetHeight || 560;
+    } else if (window.innerWidth) {
+        containerWidth = Math.min(window.innerWidth - 40, 1100);
+    }
+    
+    containerWidth = Math.min(containerWidth, 1100);
+    containerWidth = Math.max(300, containerWidth); // Minimum width
+    containerHeight = Math.max(400, containerHeight); // Minimum height
+    
+    // Responsive dimensions
+    const W = containerWidth;
+    const H = Math.max(400, Math.min(containerHeight, W * 0.51)); // Maintain aspect ratio
+    
+    // Responsive margins
+    const isMobile = W < 600;
+    const margin = {
+        top: isMobile ? 50 : 80,
+        right: isMobile ? 20 : 40,
+        bottom: isMobile ? 60 : 80,
+        left: isMobile ? 40 : 60
+    };
+    
+    // Clear any existing SVG
+    d3.select("#garden").select("svg").remove();
+    
     const svg = d3.select("#garden").append("svg")
-        .attr("width", W).attr("height", H);
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("viewBox", `0 0 ${W} ${H}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .style("max-width", "1100px")
+        .style("min-height", "400px");
     
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
     const innerW = W - margin.left - margin.right;
@@ -143,25 +179,34 @@ function drawFlowers(flowers) {
     const petalLen   = (k) => d3.scaleLinear().domain([3, 12]).range([35, 65])(k);
 
     // ==== company names ====
+    const axisFontSize = isMobile ? "12px" : "16px";
     g.append("g").attr("transform", `translate(0,${innerH})`)
         .call(d3.axisBottom(x))
-        .selectAll("text").attr("dy", "1.25em").attr("font-size", "16px");
+        .selectAll("text")
+        .attr("dy", "1.25em")
+        .style("font-size", axisFontSize);
 
     // // y axis as number of works
     // g.append("g")
     //     .call(d3.axisLeft(stemH).ticks(5))
     //     .selectAll("text").style("font-size","11px");
     
+    const titleFontSize = isMobile ? "14px" : "18px";
+    const labelFontSize = isMobile ? "11px" : "14px";
+    
     g.append("text")
-        .attr("x", innerW/2).attr("y", -30)
+        .attr("x", innerW/2).attr("y", isMobile ? -20 : -30)
         .attr("text-anchor", "middle")
-        .style("font-size","18px").style("font-weight",700)
+        .style("font-size", titleFontSize)
+        .style("font-weight", 700)
         .text("Production Company and the Genres They Explored as Flowers");
     
     g.append("text")
         .attr("transform","rotate(-90)")
-        .attr("x", -innerH/2).attr("y", -40)
-        .attr("text-anchor","middle").style("fill","#666")
+        .attr("x", -innerH/2).attr("y", isMobile ? -30 : -40)
+        .attr("text-anchor","middle")
+        .style("fill","#666")
+        .style("font-size", labelFontSize)
         .text("# of works (stem height)");
 
     // Flower containers

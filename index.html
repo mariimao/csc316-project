@@ -98,7 +98,7 @@
 
           <div class="global-genre-map placeholder" id="globalGenreMap">
             <div class="placeholder__label">
-              <img src="assets/ConnectedCountriesMap4.png" style="width: 900px;"/>
+              <img src="assets/ConnectedCountriesMap4.png" alt="Global genre map"/>
             </div>
           </div>
         </article>
@@ -150,7 +150,9 @@
                   <button class="control-btn" onclick="resetSpiral()">↺ Reset</button>
               </div>
 
-              <svg id="spiral-viz" width="800" height="800"></svg>
+              <div style="width: 100%; max-width: 800px; margin: 0 auto;">
+                <svg id="spiral-viz"></svg>
+              </div>
 
               <div class="legend" id="legend"></div>
           </div>

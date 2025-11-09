@@ -28,12 +28,39 @@
         'Documentary': '#2E8B57'
     };
 
-    // Setup SVG
+    // Setup SVG - responsive sizing
     const svg = d3.select('#spiral-viz');
-    const width = 800;
-    const height = 800;
+    if (svg.empty()) {
+        console.warn('Spiral visualization container not found');
+        return;
+    }
+    
+    // Get container or parent dimensions
+    const container = svg.node().parentElement || svg.node();
+    let containerWidth = 800;
+    
+    if (container && container.clientWidth) {
+        containerWidth = Math.min(container.clientWidth, 800);
+    } else if (window.innerWidth) {
+        containerWidth = Math.min(window.innerWidth - 40, 800);
+    }
+    
+    // Ensure minimum size
+    containerWidth = Math.max(300, containerWidth);
+    const width = containerWidth;
+    const height = width; // Maintain square aspect ratio
     const centerX = width / 2;
     const centerY = height / 2;
+    
+    // Set SVG attributes for responsiveness
+    svg.attr('width', '100%')
+       .attr('height', '100%')
+       .attr('viewBox', `0 0 ${width} ${height}`)
+       .attr('preserveAspectRatio', 'xMidYMid meet')
+       .style('max-width', '800px')
+       .style('max-height', '800px')
+       .style('min-width', '300px')
+       .style('min-height', '300px');
 
     const g = svg.append('g')
         .attr('transform', `translate(${centerX}, ${centerY})`);
@@ -41,9 +68,9 @@
     // Tooltip
     const tooltip = d3.select('#tooltip');
 
-    // Spiral parameters
+    // Spiral parameters - responsive sizing
     const numCoils = 3;
-    const maxRadius = 300;
+    const maxRadius = Math.min(300, width * 0.375); // Scale with container
     const segments = timelineData.length;
 
     // Generate spiral points
@@ -79,6 +106,9 @@
             .y(p => p.y)
             .curve(d3.curveCardinal);
 
+        // Responsive stroke width
+        const baseStrokeWidth = Math.max(15, Math.min(20, width / 40));
+        
         const path = spiralGroup.append('path')
             .datum(points)
             .attr('class', 'spiral-path')
@@ -86,6 +116,7 @@
             .attr('stroke', genreColors[d.genre])
             .attr('stroke-width', 0)
             .attr('opacity', 0.85)
+            .attr('data-base-width', baseStrokeWidth)
             .on('mouseover', function(event) {
                 d3.select(this).attr('opacity', 1);
                 tooltip
@@ -150,12 +181,13 @@
 
     // Animation function
     function animateSpiral() {
-        // Animate stroke width
+        // Animate stroke width - use responsive width
+        const baseStrokeWidth = Math.max(15, Math.min(20, width / 40));
         svg.selectAll('.spiral-path')
             .transition()
             .duration(300)
             .delay((d, i) => i * 100)
-            .attr('stroke-width', 20);
+            .attr('stroke-width', baseStrokeWidth);
 
         // Animate labels
         svg.selectAll('.genre-label, .time-label')
