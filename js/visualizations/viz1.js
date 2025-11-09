@@ -9,7 +9,7 @@ const svg = d3.select("#bubbleChart")
     .attr("height", height)
     .style("background-color", "#000000");
 
-d3.tsv("tmdb/tmdb_tv_reduced.tsv").then(data => {
+d3.tsv("data/tmdb/tmdb_tv_reduced.tsv").then(data => {
     const genreCounts = {};
 
     data.forEach(d => {

@@ -3,7 +3,7 @@
 let tmdbMovies = [];
 
 function loadData() {
-    d3.tsv("tmdb/tmdb_movies_reduced.tsv", d3.autoType)
+    d3.tsv("data/tmdb/tmdb_movies_reduced.tsv", d3.autoType)
         .then(raw => {
             tmdbMovies = prepareMovies(raw);
             console.log("movies:", tmdbMovies.length);
