@@ -140,7 +140,22 @@
             />
             <button id="searchBtn">Generate!</button>
           </div>
-          <iframe src="spiral.html" width="1200" height="900"></iframe>
+          <!-- Inline spiral visualization (moved from spiral.html) -->
+          <div class="container">
+              <h1>Netflix Genre & Keyword Spiral Over Time</h1>
+              <p class="subtitle">Which genres and keywords are most common at different times?</p>
+
+              <div class="controls">
+                  <button class="control-btn" onclick="animateSpiral()">🔄 Animate</button>
+                  <button class="control-btn" onclick="resetSpiral()">↺ Reset</button>
+              </div>
+
+              <svg id="spiral-viz" width="800" height="800"></svg>
+
+              <div class="legend" id="legend"></div>
+          </div>
+
+          <div class="tooltip" id="tooltip"></div>
 
 
           <div class="world-heatmap placeholder" id="worldHeatmap">
@@ -158,5 +173,6 @@
   <script src="js/visualizations/viz1.js"></script>
   <script src="js/data_processor.js"></script>
   <script src="js/flowers.js"></script>
+  <script src="js/visualizations/spiral.js"></script>
   </body>
 </html>

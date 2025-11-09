@@ -1,155 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Genre Spiral Visualization</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #1a1a2e;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 30px;
-        }
-
-        #spiral-viz {
-            display: block;
-            margin: 0 auto;
-        }
-
-        .spiral-path {
-            fill: none;
-            stroke-width: 20;
-            stroke-linecap: round;
-            transition: stroke-width 0.3s;
-        }
-
-        .spiral-path:hover {
-            stroke-width: 25;
-            cursor: pointer;
-        }
-
-        .genre-label {
-            font-size: 12px;
-            font-weight: bold;
-            pointer-events: none;
-            text-anchor: middle;
-        }
-
-        .time-label {
-            font-size: 10px;
-            fill: #666;
-            text-anchor: middle;
-        }
-
-        .center-label {
-            font-size: 24px;
-            font-weight: bold;
-            text-anchor: middle;
-            fill: #000;
-        }
-
-        .legend {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
-            padding: 20px;
-            background: #f9fafb;
-            border-radius: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 2px solid #000;
-        }
-
-        .tooltip {
-            position: absolute;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 14px;
-            z-index: 1000;
-        }
-
-        .controls {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            margin: 0 5px;
-            border: none;
-            background: #E50914;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .control-btn:hover {
-            background: #b8070f;
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1>Netflix Genre & Keyword Spiral Over Time</h1>
-    <p class="subtitle">Which genres and keywords are most common at different times?</p>
-
-    <div class="controls">
-        <button class="control-btn" onclick="animateSpiral()">🔄 Animate</button>
-        <button class="control-btn" onclick="resetSpiral()">↺ Reset</button>
-    </div>
-
-    <svg id="spiral-viz" width="800" height="800"></svg>
-
-    <div class="legend" id="legend"></div>
-</div>
-
-<div class="tooltip" id="tooltip"></div>
-
-<script>
+// Spiral visualization moved from spiral.html
+(function(){
     // Sample data: genres/keywords over time
     const timelineData = [
         { time: 'Jan', genre: 'Drama', keyword: 'family', popularity: 85 },
@@ -328,8 +178,11 @@
             .attr('opacity', 0);
     }
 
+    // Expose control functions for inline buttons
+    window.animateSpiral = animateSpiral;
+    window.resetSpiral = resetSpiral;
+
     // Auto-animate on load
     setTimeout(animateSpiral, 500);
-</script>
-</body>
-</html>
+
+})();
