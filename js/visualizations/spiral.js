@@ -1,155 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Genre Spiral Visualization</title>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #1a1a2e;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 30px;
-        }
-
-        #spiral-viz {
-            display: block;
-            margin: 0 auto;
-        }
-
-        .spiral-path {
-            fill: none;
-            stroke-width: 20;
-            stroke-linecap: round;
-            transition: stroke-width 0.3s;
-        }
-
-        .spiral-path:hover {
-            stroke-width: 25;
-            cursor: pointer;
-        }
-
-        .genre-label {
-            font-size: 12px;
-            font-weight: bold;
-            pointer-events: none;
-            text-anchor: middle;
-        }
-
-        .time-label {
-            font-size: 10px;
-            fill: #666;
-            text-anchor: middle;
-        }
-
-        .center-label {
-            font-size: 24px;
-            font-weight: bold;
-            text-anchor: middle;
-            fill: #000;
-        }
-
-        .legend {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 30px;
-            padding: 20px;
-            background: #f9fafb;
-            border-radius: 8px;
-        }
-
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 2px solid #000;
-        }
-
-        .tooltip {
-            position: absolute;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 14px;
-            z-index: 1000;
-        }
-
-        .controls {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .control-btn {
-            padding: 10px 20px;
-            margin: 0 5px;
-            border: none;
-            background: #E50914;
-            color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .control-btn:hover {
-            background: #b8070f;
-            transform: translateY(-2px);
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1>Netflix Genre & Keyword Spiral Over Time</h1>
-    <p class="subtitle">Which genres and keywords are most common at different times?</p>
-
-    <div class="controls">
-        <button class="control-btn" onclick="animateSpiral()">🔄 Animate</button>
-        <button class="control-btn" onclick="resetSpiral()">↺ Reset</button>
-    </div>
-
-    <svg id="spiral-viz" width="800" height="800"></svg>
-
-    <div class="legend" id="legend"></div>
-</div>
-
-<div class="tooltip" id="tooltip"></div>
-
-<script>
+// Spiral visualization moved from spiral.html
+(function(){
     // Sample data: genres/keywords over time
     const timelineData = [
         { time: 'Jan', genre: 'Drama', keyword: 'family', popularity: 85 },
@@ -178,12 +28,39 @@
         'Documentary': '#2E8B57'
     };
 
-    // Setup SVG
+    // Setup SVG - responsive sizing
     const svg = d3.select('#spiral-viz');
-    const width = 800;
-    const height = 800;
+    if (svg.empty()) {
+        console.warn('Spiral visualization container not found');
+        return;
+    }
+    
+    // Get container or parent dimensions
+    const container = svg.node().parentElement || svg.node();
+    let containerWidth = 800;
+    
+    if (container && container.clientWidth) {
+        containerWidth = Math.min(container.clientWidth, 800);
+    } else if (window.innerWidth) {
+        containerWidth = Math.min(window.innerWidth - 40, 800);
+    }
+    
+    // Ensure minimum size
+    containerWidth = Math.max(300, containerWidth);
+    const width = containerWidth;
+    const height = width; // Maintain square aspect ratio
     const centerX = width / 2;
     const centerY = height / 2;
+    
+    // Set SVG attributes for responsiveness
+    svg.attr('width', '100%')
+       .attr('height', '100%')
+       .attr('viewBox', `0 0 ${width} ${height}`)
+       .attr('preserveAspectRatio', 'xMidYMid meet')
+       .style('max-width', '800px')
+       .style('max-height', '800px')
+       .style('min-width', '300px')
+       .style('min-height', '300px');
 
     const g = svg.append('g')
         .attr('transform', `translate(${centerX}, ${centerY})`);
@@ -191,9 +68,9 @@
     // Tooltip
     const tooltip = d3.select('#tooltip');
 
-    // Spiral parameters
+    // Spiral parameters - responsive sizing
     const numCoils = 3;
-    const maxRadius = 300;
+    const maxRadius = Math.min(300, width * 0.375); // Scale with container
     const segments = timelineData.length;
 
     // Generate spiral points
@@ -229,6 +106,9 @@
             .y(p => p.y)
             .curve(d3.curveCardinal);
 
+        // Responsive stroke width
+        const baseStrokeWidth = Math.max(15, Math.min(20, width / 40));
+        
         const path = spiralGroup.append('path')
             .datum(points)
             .attr('class', 'spiral-path')
@@ -236,6 +116,7 @@
             .attr('stroke', genreColors[d.genre])
             .attr('stroke-width', 0)
             .attr('opacity', 0.85)
+            .attr('data-base-width', baseStrokeWidth)
             .on('mouseover', function(event) {
                 d3.select(this).attr('opacity', 1);
                 tooltip
@@ -300,12 +181,13 @@
 
     // Animation function
     function animateSpiral() {
-        // Animate stroke width
+        // Animate stroke width - use responsive width
+        const baseStrokeWidth = Math.max(15, Math.min(20, width / 40));
         svg.selectAll('.spiral-path')
             .transition()
             .duration(300)
             .delay((d, i) => i * 100)
-            .attr('stroke-width', 20);
+            .attr('stroke-width', baseStrokeWidth);
 
         // Animate labels
         svg.selectAll('.genre-label, .time-label')
@@ -328,8 +210,11 @@
             .attr('opacity', 0);
     }
 
+    // Expose control functions for inline buttons
+    window.animateSpiral = animateSpiral;
+    window.resetSpiral = resetSpiral;
+
     // Auto-animate on load
     setTimeout(animateSpiral, 500);
-</script>
-</body>
-</html>
+
+})();
