@@ -303,6 +303,13 @@
         opacity: 1;
       }
 
+      .credits-text {
+        margin-top: 16px;
+        font-size: 14px;
+        text-align: right;
+        opacity: 0.9;
+      }
+
       /* Bubble chart container on page 4 */
       .bubble-chart-wrapper {
         margin-top: 32px;
@@ -312,6 +319,19 @@
       }
 
       #bubbleChart {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Line chart container on page 5 */
+      .line-chart-wrapper {
+        margin-top: 32px;
+        width: min(1000px, 94vw);
+        height: 420px;
+        margin-inline: auto;
+      }
+
+      #lineChart {
         width: 100%;
         height: 100%;
       }
@@ -463,6 +483,7 @@
     </script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="js/visualizations/bubble_chart.js"></script>
+    <script src="js/visualizations/line_chart.js"></script>
   </head>
   <body>
     <img
@@ -680,6 +701,7 @@
             You and your 9 other siblings can't
             decide what to watch. Everyone has their own favourite genres...
            </p>
+           
           <div class="sibling-lineup" aria-label="Siblings and their favourite genres">
             <div class="sibling-card" data-genre="Drama">
               <img
@@ -773,12 +795,18 @@
           <div class="bubble-chart-wrapper">
             <div id="bubbleChart"></div>
           </div>
-          <p>The most popular genre is <span class="most-popular-genre">Drama</span> with <span class="most-popular-count">???</span> shows.</p>
+          <p>The most popular genre is <span class="most-popular-genre">Drama</span> with <span class="most-popular-count">19627</span> shows.</p>
         </div>
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>Page 5</h1>
+          <h1>How has genre popularity changed over time?</h1>
+          <p class="subtitle">
+            Each line shows how many new shows started in that genre each year.
+          </p>
+          <div class="line-chart-wrapper">
+            <div id="lineChart"></div>
+          </div>
         </div>
       </div>
       <div class="page">
@@ -788,16 +816,21 @@
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>References/sources (format later)</h1>
-          Star animation: https://nyknck.itch.io/staranimation @nyk_nck
-          Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
-          clapper pixel art: https://jose-moyano.itch.io/clapper-pixel-art
-          https://picrew.me/en/image_maker/270210
+          <!-- <h1>References/sources (format later)</h1> -->
+          <p class="credits-text">
+            Star animation: https://nyknck.itch.io/staranimation @nyk_nck
+            Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
+            clapper pixel art: https://jose-moyano.itch.io/clapper-pixel-art
+            https://picrew.me/en/image_maker/270210
+
+          </p>
+          
         </div>
       </div>
     </div>
 
     <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
