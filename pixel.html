@@ -3,21 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pixel Art Background</title>
+    <title>TODO: CHANGE THIS TITLE LATER</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=DotGothic16&display=swap");
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
       @font-face {
         font-family: daydream;
-        src: url(fonts/Daydream DEMO.otf);
-      }
-      @font-face {
-        font-family: pixelmania;
-        src: url(fonts/Pixelmania.ttf);
+        src: url(fonts/Daydream.otf);
       }
       @font-face {
         font-family: starcrush;
         src: url(fonts/star-crush.regular.ttf);
+      }
+      @font-face {
+        font-family: bitregular;
+        src: url(fonts/BitRegular.ttf);
       }
 
       * {
@@ -35,14 +34,13 @@
       html,
       body {
         width: 100%;
-      }
-
-      body {
         position: relative;
-        font-family: "starcrush", sans-serif;
+        font-family: "bitregular", sans-serif;
         color: #fff;
         margin: 0;
         padding: 0;
+        cursor: url("assets/cursor.png"), auto;
+        font-size: 24px;
       }
 
       .scroll-spacer {
@@ -73,6 +71,7 @@
 
       .page.active {
         opacity: 1;
+        pointer-events: auto;
       }
 
       .page-content {
@@ -139,6 +138,85 @@
         left: 90%;
         top: 70px;
       }
+
+      /* Pixel gallery overlay: repeated pixelated thumbnails */
+      .pixel-gallery {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        z-index: 3;
+        pointer-events: none; /* let clicks pass through */
+      }
+
+      .pixel-gallery img {
+        width: 72px;
+        height: auto;
+        image-rendering: pixelated;
+        border-radius: 4px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        pointer-events: auto; /* allow hover if needed */
+      }
+
+      /* Landing page title, subtitle and start button */
+      .main-title {
+        font-size: 64px;
+        letter-spacing: 4px;
+        margin-bottom: 8px;
+        font-family: "starcrush", sans-serif;
+      }
+
+      .subtitle {
+        opacity: 0.85;
+        margin-bottom: 80px;
+      }
+
+      .start-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 18px;
+        background: #be620c;
+        color: #fff;
+        border: 2px solid rgb(255, 255, 255);
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: "bitregular", sans-serif;
+        font-size: 14px;
+        transition: transform 140ms ease, background 140ms ease;
+        font-size: 40px;
+      }
+
+      .start-button:hover {
+        transform: translateY(-3px);
+        background: rgb(190, 113, 7);
+      }
+
+      .clapper-icon {
+        width: 28px;
+        height: auto;
+      }
+
+      /* Use link-select cursor for interactive elements (links, buttons, inputs, role=button, onclick) */
+      a,
+      a:focus,
+      a:hover,
+      button,
+      button:focus,
+      button:hover,
+      input[type="button"],
+      input[type="submit"],
+      input[type="reset"],
+      label[for],
+      [role="button"],
+      [onclick],
+      .start-button,
+      .start-button:focus,
+      .start-button:hover {
+        cursor: url("assets/link-select.png"), pointer;
+      }
     </style>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -163,6 +241,39 @@
         window.addEventListener("scroll", updateActivePage);
         window.addEventListener("resize", updateActivePage);
         updateActivePage(); // Initial call
+
+        // Start button: scroll to the next page when clicked
+        const startBtn = document.getElementById("startBtn");
+        if (startBtn) {
+          startBtn.addEventListener("click", function () {
+            window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+          });
+          // Swap clapper icon on hover/focus
+          const clapperImg = startBtn.querySelector(".clapper-icon");
+          if (clapperImg) {
+            const originalSrc = clapperImg.getAttribute("src");
+            const hoverSrc = "assets/clapper10.png";
+            startBtn.addEventListener("mouseenter", () =>
+              clapperImg.setAttribute("src", hoverSrc)
+            );
+            startBtn.addEventListener("mouseleave", () =>
+              clapperImg.setAttribute("src", originalSrc)
+            );
+            startBtn.addEventListener("focus", () =>
+              clapperImg.setAttribute("src", hoverSrc)
+            );
+            startBtn.addEventListener("blur", () =>
+              clapperImg.setAttribute("src", originalSrc)
+            );
+            // Touch support: toggle on touchstart and touchend
+            startBtn.addEventListener("touchstart", () =>
+              clapperImg.setAttribute("src", hoverSrc)
+            );
+            startBtn.addEventListener("touchend", () =>
+              clapperImg.setAttribute("src", originalSrc)
+            );
+          }
+        }
       });
     </script>
   </head>
@@ -201,12 +312,25 @@
     <div class="page-container">
       <div class="page active">
         <div class="page-content">
-          <h1>PAGE 1</h1>
+          <h1 class="main-title">MOVIES AND TV SHOWS</h1>
+          <p class="subtitle">smth smth placeholder text</p>
+          <button class="start-button" id="startBtn" aria-label="Start">
+            <img src="assets/clapper1.png" alt="clapper" class="clapper-icon" />
+            <span>START</span>
+          </button>
         </div>
       </div>
       <div class="page">
         <div class="page-content">
           <h1>Page 2</h1>
+          <!-- Pixel gallery overlay: repeated pixelated thumbnails
+          <div class="pixel-gallery" aria-hidden="true">
+            <img src="assets/pixelated-image.png" alt="pixel" />
+            <img src="assets/pixelated-image.png" alt="pixel" />
+            <img src="assets/pixelated-image.png" alt="pixel" />
+            <img src="assets/pixelated-image.png" alt="pixel" />
+            <img src="assets/pixelated-image.png" alt="pixel" />
+          </div> -->
         </div>
       </div>
       <div class="page">
@@ -227,6 +351,13 @@
       <div class="page">
         <div class="page-content">
           <h1>Page 6</h1>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>References/sources (format later)</h1>
+          Star animation: https://nyknck.itch.io/staranimation @nyk_nck
+          Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
         </div>
       </div>
     </div>
