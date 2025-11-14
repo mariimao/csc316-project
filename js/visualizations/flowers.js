@@ -14,7 +14,7 @@ let tmdbMovies = [];
  * Load movie data and initialize the flowers visualization
  */
 function loadFlowersData() {
-    d3.tsv("../data/tmdb/tmdb_movies_reduced.tsv", d3.autoType)
+    d3.tsv("data/tmdb/tmdb_movies_reduced.tsv", d3.autoType)
         .then(raw => {
             tmdbMovies = prepareMovies(raw);
             console.log("movies:", tmdbMovies.length);
