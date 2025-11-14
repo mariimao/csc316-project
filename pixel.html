@@ -286,9 +286,34 @@
         font-weight: bold;
       }
 
-      .selected-genre-text {
-        margin-top: 6px;
-        font-size: 16px;
+      .character-name + .genre-label {
+        margin-top: -8px;
+      }
+
+      .card-you-tag {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #ffda6a;
+        opacity: 0;
+        min-height: 1em;
+      }
+
+      .character-card.selected .card-you-tag {
+        opacity: 1;
+      }
+
+      /* Bubble chart container on page 4 */
+      .bubble-chart-wrapper {
+        margin-top: 32px;
+        width: min(900px, 92vw);
+        height: 420px;
+        margin-inline: auto;
+      }
+
+      #bubbleChart {
+        width: 100%;
+        height: 100%;
       }
 
       /* Act 1 sibling lineup */
@@ -406,16 +431,12 @@
 
         // Character / genre select logic
         const cards = document.querySelectorAll(".character-card");
-        const selectedOutput = document.getElementById("selectedGenre");
 
         function selectCard(card) {
           cards.forEach((c) => c.classList.remove("selected"));
           card.classList.add("selected");
 
           const genre = card.getAttribute("data-genre");
-          if (selectedOutput && genre) {
-            selectedOutput.textContent = `Favourite genre: ${genre}`;
-          }
 
           // Update sibling lineup highlight
           if (siblingCards && siblingCards.length) {
@@ -440,6 +461,8 @@
         });
       });
     </script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/visualizations/bubble_chart.js"></script>
   </head>
   <body>
     <img
@@ -491,10 +514,7 @@
               Select a role based on your favourite genre
             </h1>
             <p class="character-select-subtitle">
-              Keep an eye out for insights related to the genre you selected.
-            </p>
-            <p class="selected-genre-text" id="selectedGenre">
-              No genre selected yet.
+              These are the TOP 10 most popular genres worldwide!
             </p>
             <div class="genre-grid">
               <div
@@ -510,6 +530,7 @@
                   />
                 <div class="character-name">Reporter</div>
                 <div class="genre-label">Drama</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -524,6 +545,7 @@
                   />
                 <div class="character-name">Comedian</div>
                 <div class="genre-label">Comedy</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -538,6 +560,7 @@
                   />
                 <div class="character-name">Scientist</div>
                 <div class="genre-label">Documentary</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -552,6 +575,7 @@
                   />
                 <div class="character-name">Artist</div>
                 <div class="genre-label">Animation</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -566,6 +590,7 @@
                   />
                 <div class="character-name">Pop Star</div>
                 <div class="genre-label">Reality</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -580,6 +605,7 @@
                   />
                 <div class="character-name">Adventurer</div>
                 <div class="genre-label">Action &amp; Adventure</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -594,6 +620,7 @@
                   />
                 <div class="character-name">Thief</div>
                 <div class="genre-label">Crime</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -608,6 +635,7 @@
                   />
                 <div class="character-name">Teacher</div>
                 <div class="genre-label">Family</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -622,6 +650,7 @@
                   />
                 <div class="character-name">Magician</div>
                 <div class="genre-label">Sci-Fi &amp; Fantasy</div>
+                <div class="card-you-tag">YOU</div>
               </div>
               <div
                 class="character-card"
@@ -636,6 +665,7 @@
                   />
                 <div class="character-name">Detective</div>
                 <div class="genre-label">Mystery</div>
+                <div class="card-you-tag">YOU</div>
               </div>
             </div>
           </div>
@@ -736,12 +766,14 @@
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>Page 3</h1>
-        </div>
-      </div>
-      <div class="page">
-        <div class="page-content">
-          <h1>Page 4</h1>
+          <h1>How many popular movies and shows are within each genre?</h1>
+          <p class="subtitle">
+            Bigger bubbles = more popular genres!
+          </p>
+          <div class="bubble-chart-wrapper">
+            <div id="bubbleChart"></div>
+          </div>
+          <p>The most popular genre is <span class="most-popular-genre">Drama</span> with <span class="most-popular-count">???</span> shows.</p>
         </div>
       </div>
       <div class="page">
@@ -766,7 +798,6 @@
     </div>
 
     <!-- Invisible spacers to create scroll height -->
-    <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
