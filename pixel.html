@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pixel Art Background</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DotGothic16&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+      @font-face {
+        font-family: daydream;
+        src: url(fonts/Daydream DEMO.otf);
+      }
+      @font-face {
+        font-family: pixelmania;
+        src: url(fonts/Pixelmania.ttf);
+      }
+      @font-face {
+        font-family: starcrush;
+        src: url(fonts/star-crush.regular.ttf);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-snap-type: y mandatory;
+        overflow-x: hidden;
+      }
+
+      html,
+      body {
+        width: 100%;
+      }
+
+      body {
+        position: relative;
+        font-family: "starcrush", sans-serif;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+      }
+
+      .scroll-spacer {
+        height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+      }
+
+      .page-container {
+        position: relative;
+        z-index: 0;
+      }
+
+      .page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .page.active {
+        opacity: 1;
+      }
+
+      .page-content {
+        text-align: center;
+        padding: 20px;
+      }
+
+      @keyframes fluctuateSaturation {
+        0%,
+        100% {
+          filter: brightness(0.4) saturate(0.8) contrast(1);
+        }
+        50% {
+          filter: brightness(0.5) saturate(1.2);
+        }
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        min-width: 100%;
+        min-height: 100%;
+        background-image: url("assets/wp9502325-pixel-art-retro-hd-wallpapers.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: brightness(0.6);
+        animation: fluctuateSaturation 4s ease-in-out infinite;
+        z-index: -1;
+      }
+
+      .animated-star {
+        position: fixed;
+        z-index: 1;
+        width: 10px;
+        height: auto;
+      }
+
+      .star-1 {
+        left: 8%;
+        top: 15px;
+      }
+      .star-2 {
+        left: 22%;
+        top: 65px;
+      }
+      .star-3 {
+        left: 38%;
+        top: 25px;
+      }
+      .star-4 {
+        left: 58%;
+        top: 40px;
+      }
+      .star-5 {
+        left: 75%;
+        top: 20px;
+      }
+      .star-6 {
+        left: 90%;
+        top: 70px;
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const pages = document.querySelectorAll(".page");
+        const spacers = document.querySelectorAll(".scroll-spacer");
+        const totalPages = pages.length;
+
+        function updateActivePage() {
+          const scrollPosition = window.scrollY;
+          const viewportHeight = window.innerHeight;
+          const currentPageIndex = Math.round(scrollPosition / viewportHeight);
+
+          pages.forEach((page, index) => {
+            if (index === currentPageIndex) {
+              page.classList.add("active");
+            } else {
+              page.classList.remove("active");
+            }
+          });
+        }
+
+        window.addEventListener("scroll", updateActivePage);
+        window.addEventListener("resize", updateActivePage);
+        updateActivePage(); // Initial call
+      });
+    </script>
+  </head>
+  <body>
+    <img
+      src="assets/animated-star.gif"
+      alt="Animated Star"
+      class="animated-star star-1"
+    />
+    <img
+      src="assets/animated-star-2.gif"
+      alt="Animated Star"
+      class="animated-star star-2"
+    />
+    <img
+      src="assets/animated-star-3.gif"
+      alt="Animated Star"
+      class="animated-star star-3"
+    />
+    <img
+      src="assets/animated-star.gif"
+      alt="Animated Star"
+      class="animated-star star-4"
+    />
+    <img
+      src="assets/animated-star-2.gif"
+      alt="Animated Star"
+      class="animated-star star-5"
+    />
+    <img
+      src="assets/animated-star.gif"
+      alt="Animated Star"
+      class="animated-star star-6"
+    />
+
+    <div class="page-container">
+      <div class="page active">
+        <div class="page-content">
+          <h1>PAGE 1</h1>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Page 2</h1>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Page 3</h1>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Page 4</h1>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Page 5</h1>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Page 6</h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+  </body>
+</html>
