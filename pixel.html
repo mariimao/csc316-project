@@ -199,6 +199,134 @@
         height: auto;
       }
 
+      /* Character / genre select screen */
+      .character-select-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .character-select-heading {
+        font-size: 32px;
+        text-shadow: 0 3px 0 #000;
+      }
+
+      .character-select-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .genre-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        width: min(900px, 92vw);
+        margin-top: 16px;
+      }
+
+      .character-card {
+        background: rgba(7, 9, 31, 0.92);
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        padding: 12px 10px;
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        transition: transform 120ms ease, box-shadow 120ms ease,
+          border-color 120ms ease, background 120ms ease;
+      }
+
+      .character-card:hover,
+      .character-card:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 0 rgba(0, 0, 0, 0.85);
+        background: rgba(18, 23, 72, 0.95);
+        outline: none;
+      }
+
+      .character-card.selected {
+        border-color: #ffda6a;
+        box-shadow: 0 0 12px rgba(255, 218, 106, 0.7);
+        background: rgba(41, 31, 7, 0.98);
+      }
+
+      .sprite-placeholder {
+        width: 72px;
+        height: 72px;
+        border-radius: 4px;
+        border: 2px dashed rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: rgba(0, 0, 0, 0.35);
+      }
+
+      .character-sprite {
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        object-fit: contain;
+        display: block;
+      }
+
+      .genre-label {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .character-name {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .selected-genre-text {
+        margin-top: 6px;
+        font-size: 16px;
+      }
+
+      /* Act 1 sibling lineup */
+      .sibling-lineup {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* gap: 18px; */
+      }
+
+      .sibling-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* gap: 4px; */
+      }
+
+      .sibling-sprite {
+        width: 100px;
+        height: 100px;
+        image-rendering: pixelated;
+        object-fit: contain;
+        display: block;
+      }
+
+      .sibling-you-tag {
+        font-size: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #ffda6a;
+        display: none;
+      }
+
+      .sibling-card.is-you .sibling-you-tag {
+        display: block;
+      }
+
       /* Use link-select cursor for interactive elements (links, buttons, inputs, role=button, onclick) */
       a,
       a:focus,
@@ -223,6 +351,7 @@
         const pages = document.querySelectorAll(".page");
         const spacers = document.querySelectorAll(".scroll-spacer");
         const totalPages = pages.length;
+        const siblingCards = document.querySelectorAll(".sibling-card");
 
         function updateActivePage() {
           const scrollPosition = window.scrollY;
@@ -274,6 +403,41 @@
             );
           }
         }
+
+        // Character / genre select logic
+        const cards = document.querySelectorAll(".character-card");
+        const selectedOutput = document.getElementById("selectedGenre");
+
+        function selectCard(card) {
+          cards.forEach((c) => c.classList.remove("selected"));
+          card.classList.add("selected");
+
+          const genre = card.getAttribute("data-genre");
+          if (selectedOutput && genre) {
+            selectedOutput.textContent = `Favourite genre: ${genre}`;
+          }
+
+          // Update sibling lineup highlight
+          if (siblingCards && siblingCards.length) {
+            siblingCards.forEach((sib) => {
+              if (sib.getAttribute("data-genre") === genre) {
+                sib.classList.add("is-you");
+              } else {
+                sib.classList.remove("is-you");
+              }
+            });
+          }
+        }
+
+        cards.forEach((card) => {
+          card.addEventListener("click", () => selectCard(card));
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectCard(card);
+            }
+          });
+        });
       });
     </script>
   </head>
@@ -312,8 +476,8 @@
     <div class="page-container">
       <div class="page active">
         <div class="page-content">
-          <h1 class="main-title">MOVIES AND TV SHOWS</h1>
-          <p class="subtitle">smth smth placeholder text</p>
+          <h1 class="main-title">Battle of the Genres</h1>
+          <p class="subtitle">Is your favourite show or movie genre the best?</p>
           <button class="start-button" id="startBtn" aria-label="Start">
             <img src="assets/clapper1.png" alt="clapper" class="clapper-icon" />
             <span>START</span>
@@ -322,15 +486,252 @@
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>Page 2</h1>
-          <!-- Pixel gallery overlay: repeated pixelated thumbnails
-          <div class="pixel-gallery" aria-hidden="true">
-            <img src="assets/pixelated-image.png" alt="pixel" />
-            <img src="assets/pixelated-image.png" alt="pixel" />
-            <img src="assets/pixelated-image.png" alt="pixel" />
-            <img src="assets/pixelated-image.png" alt="pixel" />
-            <img src="assets/pixelated-image.png" alt="pixel" />
-          </div> -->
+          <div class="character-select-container">
+            <h1 class="character-select-heading">
+              Select a role based on your favourite genre
+            </h1>
+            <p class="character-select-subtitle">
+              Keep an eye out for insights related to the genre you selected.
+            </p>
+            <p class="selected-genre-text" id="selectedGenre">
+              No genre selected yet.
+            </p>
+            <div class="genre-grid">
+              <div
+                class="character-card"
+                data-genre="Drama"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140617.png"
+                    alt="Drama character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Reporter</div>
+                <div class="genre-label">Drama</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Comedy"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140657.png"
+                    alt="Comedy character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Comedian</div>
+                <div class="genre-label">Comedy</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Documentary"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140720.png"
+                    alt="Documentary character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Scientist</div>
+                <div class="genre-label">Documentary</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Animation"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140745.png"
+                    alt="Animation character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Artist</div>
+                <div class="genre-label">Animation</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Reality"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140807.png"
+                    alt="Reality character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Pop Star</div>
+                <div class="genre-label">Reality</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Action &amp; Adventure"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140826.png"
+                    alt="Action and Adventure character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Adventurer</div>
+                <div class="genre-label">Action &amp; Adventure</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Crime"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140923.png"
+                    alt="Crime character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Thief</div>
+                <div class="genre-label">Crime</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Family"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140950.png"
+                    alt="Family character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Teacher</div>
+                <div class="genre-label">Family</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Sci-Fi &amp; Fantasy"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105141030.png"
+                    alt="Sci-Fi and Fantasy character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Magician</div>
+                <div class="genre-label">Sci-Fi &amp; Fantasy</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Mystery"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105141144.png"
+                    alt="Mystery character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Detective</div>
+                <div class="genre-label">Mystery</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+           <h1>
+             It's family movie night!
+           </h1>
+           <p class="subtitle">
+            You and your 9 other siblings can't
+            decide what to watch. everyone has their own favourite genres
+           </p>
+          <div class="sibling-lineup" aria-label="Siblings and their favourite genres">
+            <div class="sibling-card" data-genre="Drama">
+              <img
+                src="assets/characters/download20251105140617.png"
+                alt="Drama sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Comedy">
+              <img
+                src="assets/characters/download20251105140657.png"
+                alt="Comedy sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Documentary">
+              <img
+                src="assets/characters/download20251105140720.png"
+                alt="Documentary sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Animation">
+              <img
+                src="assets/characters/download20251105140745.png"
+                alt="Animation sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Reality">
+              <img
+                src="assets/characters/download20251105140807.png"
+                alt="Reality sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Action &amp; Adventure">
+              <img
+                src="assets/characters/download20251105140826.png"
+                alt="Action &amp; Adventure sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Crime">
+              <img
+                src="assets/characters/download20251105140923.png"
+                alt="Crime sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Family">
+              <img
+                src="assets/characters/download20251105140950.png"
+                alt="Family sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Sci-Fi &amp; Fantasy">
+              <img
+                src="assets/characters/download20251105141030.png"
+                alt="Sci-Fi &amp; Fantasy sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Mystery">
+              <img
+                src="assets/characters/download20251105141144.png"
+                alt="Mystery sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="page">
@@ -359,11 +760,13 @@
           Star animation: https://nyknck.itch.io/staranimation @nyk_nck
           Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
           clapper pixel art: https://jose-moyano.itch.io/clapper-pixel-art
+          https://picrew.me/en/image_maker/270210
         </div>
       </div>
     </div>
 
     <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
