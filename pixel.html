@@ -336,6 +336,80 @@
         height: 100%;
       }
 
+      /* Flower chart container on its page */
+      .flower-wrapper {
+        margin-top: 32px;
+        width: min(1000px, 94vw);
+        height: 460px;
+        margin-inline: auto;
+      }
+
+      #garden {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      /* Spiral visualization container */
+      .spiral-wrapper {
+        margin-top: 32px;
+        width: min(900px, 92vw);
+        margin-inline: auto;
+      }
+
+      .spiral-controls {
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .spiral-controls button {
+        padding: 6px 10px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+      }
+
+      .spiral-legend {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .spiral-legend .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .spiral-legend .legend-color {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+      }
+
+      /* World heatmap & viewmap containers */
+      .world-heatmap,
+      .world-viewmap {
+        margin-top: 32px;
+        width: min(1000px, 94vw);
+        height: 480px;
+        margin-inline: auto;
+      }
+
+      .world-heatmap svg,
+      .world-viewmap svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
       /* Act 1 sibling lineup */
       .sibling-lineup {
         margin-top: 40px;
@@ -481,9 +555,14 @@
         });
       });
     </script>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/visualizations/bubble_chart.js"></script>
-    <script src="js/visualizations/line_chart.js"></script>
+    <script defer src="https://d3js.org/d3.v7.min.js"></script>
+    <script defer src="js/visualizations/bubble_chart.js"></script>
+    <script defer src="js/visualizations/line_chart.js"></script>
+    <script defer src="js/visualizations/flowers.js"></script>
+    <script defer src="js/visualizations/spiral.js"></script>
+    <script defer src="https://unpkg.com/topojson@3"></script>
+    <script defer src="js/visualizations/heatmap.js"></script>
+    <script defer src="js/visualizations/viewmap.js"></script>
   </head>
   <body>
     <img
@@ -811,7 +890,38 @@
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>Page 6</h1>
+          <h1>How do genres and themes change over time?</h1>
+          <p class="subtitle">
+            Each colored strand shows a genre & keyword along a timeline.
+          </p>
+          <div class="spiral-controls">
+            <button onclick="animateSpiral()">Replay</button>
+            <button onclick="resetSpiral()">Reset</button>
+          </div>
+          <div class="spiral-wrapper">
+            <svg id="spiral-viz"></svg>
+          </div>
+          <div class="spiral-legend" id="legend"></div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>How do studios explore different genres?</h1>
+          <p class="subtitle">
+            Each flower shows a production company and the genres it most often works in.
+          </p>
+          <div class="flower-wrapper">
+            <div id="garden"></div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Where are movies and shows being produced?</h1>
+          <p class="subtitle">
+            Each country's color shows how many movies and TV shows it produces.
+          </p>
+          <div class="world-heatmap" id="worldHeatmap"></div>
         </div>
       </div>
       <div class="page">
@@ -822,14 +932,14 @@
             Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
             clapper pixel art: https://jose-moyano.itch.io/clapper-pixel-art
             https://picrew.me/en/image_maker/270210
-
           </p>
-          
         </div>
       </div>
     </div>
 
     <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
