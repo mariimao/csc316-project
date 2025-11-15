@@ -32,7 +32,8 @@ setTimeout(() => {
         .attr("height", "100%")
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("preserveAspectRatio", "xMidYMid meet")
-        .style("background-color", "#000")
+        // Transparent so it blends with the page background
+        .style("background-color", "transparent")
         .style("min-height", `${Math.max(320, innerHeight + margin.top + margin.bottom)}px`);
 
     const chart = svg.append("g")

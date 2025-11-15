@@ -32,7 +32,8 @@ setTimeout(() => {
         .attr("height", "100%")
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("preserveAspectRatio", "xMidYMid meet")
-        .style("background-color", "#000000")
+        // Transparent so it blends with the page background
+        .style("background-color", "transparent")
         .style("min-height", "400px");
 
     d3.tsv("data/tmdb/tmdb_tv_reduced.tsv").then(data => {
@@ -61,14 +62,18 @@ setTimeout(() => {
             .domain([0, d3.max(genresArray, d => d.count)])
             .range([25, 70]);
 
+        // Use a force simulation to lay out bubbles without overlap,
+        // roughly centered in the available width/height.
         const simulation = d3.forceSimulation(genresArray)
             .force("charge", d3.forceManyBody().strength(5))
             .force("center", d3.forceCenter(width / 2, height / 2))
             .force("collision", d3.forceCollide().radius(d => radiusScale(d.count) + 4))
             .stop();
 
+        // Run the simulation for a fixed number of ticks for a stable layout
         for (let i = 0; i < 300; i++) simulation.tick();
 
+        // Clamp positions so bubbles stay fully inside the viewBox
         genresArray.forEach(d => {
             const r = radiusScale(d.count);
             d.x = Math.max(r, Math.min(width - r, d.x));
@@ -103,36 +108,7 @@ setTimeout(() => {
         nodes.append("title")
             .text(d => `${d.genre}: ${d.count} shows`);
 
-        const legend = svg.selectAll(".legend")
-            .data(genresArray)
-            .enter()
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", (d, i) => `translate(20, ${i * (legendRectSize + legendSpacing) + 20})`);
-
-        legend.append("rect")
-            .attr("width", legendRectSize)
-            .attr("height", legendRectSize)
-            .attr("fill", d => color(d.genre))
-            .attr("stroke", "#ffffffff");
-
-        legend.append("text")
-            .attr("x", legendRectSize + 2)
-            .attr("y", legendRectSize - 4)
-            .style("font-size", `${baseFontSize}px`)
-            .style("font-family", "sans-serif")
-            .style("fill", "#ffffffff")
-            .text(d => d.genre);
-
-        const sourceFontSize = Math.max(9, Math.min(12, width / 65));
-        svg.append("text")
-            .attr("x", width - 20)
-            .attr("y", height - 15)
-            .attr("text-anchor", "end")
-            .style("font-size", `${sourceFontSize}px`)
-            .style("font-family", "sans-serif")
-            .style("fill", "#ffffffff")
-            .text("Data source: TMDB");
+        // Source label removed per design request
     });
 }, 100);
 

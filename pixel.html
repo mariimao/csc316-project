@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODO: CHANGE THIS TITLE LATER</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+      @font-face {
+        font-family: daydream;
+        src: url(fonts/Daydream.otf);
+      }
+      @font-face {
+        font-family: starcrush;
+        src: url(fonts/star-crush.regular.ttf);
+      }
+      @font-face {
+        font-family: bitregular;
+        src: url(fonts/BitRegular.ttf);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-snap-type: y mandatory;
+        overflow-x: hidden;
+      }
+
+      html,
+      body {
+        width: 100%;
+        position: relative;
+        font-family: "bitregular", sans-serif;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        cursor: url("assets/cursor.png"), auto;
+        font-size: 24px;
+      }
+
+      .scroll-spacer {
+        height: 100vh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+      }
+
+      .page-container {
+        position: relative;
+        z-index: 0;
+      }
+
+      .page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .page.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .page-content {
+        text-align: center;
+        padding: 20px;
+      }
+
+      @keyframes fluctuateSaturation {
+        0%,
+        100% {
+          filter: brightness(0.4) saturate(0.8) contrast(1);
+        }
+        50% {
+          filter: brightness(0.5) saturate(1.2);
+        }
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        min-width: 100%;
+        min-height: 100%;
+        background-image: url("assets/wp9502325-pixel-art-retro-hd-wallpapers.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: brightness(0.6);
+        animation: fluctuateSaturation 4s ease-in-out infinite;
+        z-index: -1;
+      }
+
+      .animated-star {
+        position: fixed;
+        z-index: 1;
+        width: 10px;
+        height: auto;
+      }
+
+      .star-1 {
+        left: 8%;
+        top: 15px;
+      }
+      .star-2 {
+        left: 22%;
+        top: 65px;
+      }
+      .star-3 {
+        left: 38%;
+        top: 25px;
+      }
+      .star-4 {
+        left: 58%;
+        top: 40px;
+      }
+      .star-5 {
+        left: 75%;
+        top: 20px;
+      }
+      .star-6 {
+        left: 90%;
+        top: 70px;
+      }
+
+      /* Pixel gallery overlay: repeated pixelated thumbnails */
+      .pixel-gallery {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        z-index: 3;
+        pointer-events: none; /* let clicks pass through */
+      }
+
+      .pixel-gallery img {
+        width: 72px;
+        height: auto;
+        image-rendering: pixelated;
+        border-radius: 4px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        pointer-events: auto; /* allow hover if needed */
+      }
+
+      /* Landing page title, subtitle and start button */
+      .main-title {
+        font-size: 64px;
+        letter-spacing: 4px;
+        margin-bottom: 8px;
+        font-family: "starcrush", sans-serif;
+      }
+
+      .subtitle {
+        opacity: 0.85;
+        margin-bottom: 80px;
+      }
+
+      .start-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 18px;
+        background: #be620c;
+        color: #fff;
+        border: 2px solid rgb(255, 255, 255);
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: "bitregular", sans-serif;
+        font-size: 14px;
+        transition: transform 140ms ease, background 140ms ease;
+        font-size: 40px;
+      }
+
+      .start-button:hover {
+        transform: translateY(-3px);
+        background: rgb(190, 113, 7);
+      }
+
+      .clapper-icon {
+        width: 28px;
+        height: auto;
+      }
+
+      /* Character / genre select screen */
+      .character-select-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .character-select-heading {
+        font-size: 32px;
+        text-shadow: 0 3px 0 #000;
+      }
+
+      .character-select-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+      }
+
+      .genre-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        width: min(900px, 92vw);
+        margin-top: 16px;
+      }
+
+      .character-card {
+        background: rgba(7, 9, 31, 0.92);
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        padding: 12px 10px;
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        transition: transform 120ms ease, box-shadow 120ms ease,
+          border-color 120ms ease, background 120ms ease;
+      }
+
+      .character-card:hover,
+      .character-card:focus-visible {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 0 rgba(0, 0, 0, 0.85);
+        background: rgba(18, 23, 72, 0.95);
+        outline: none;
+      }
+
+      .character-card.selected {
+        border-color: #ffda6a;
+        box-shadow: 0 0 12px rgba(255, 218, 106, 0.7);
+        background: rgba(41, 31, 7, 0.98);
+      }
+
+      .sprite-placeholder {
+        width: 72px;
+        height: 72px;
+        border-radius: 4px;
+        border: 2px dashed rgba(255, 255, 255, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: rgba(0, 0, 0, 0.35);
+      }
+
+      .character-sprite {
+        width: 100%;
+        height: 100%;
+        image-rendering: pixelated;
+        object-fit: contain;
+        display: block;
+      }
+
+      .genre-label {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .character-name {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .character-name + .genre-label {
+        margin-top: -8px;
+      }
+
+      .card-you-tag {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #ffda6a;
+        opacity: 0;
+        min-height: 1em;
+      }
+
+      .character-card.selected .card-you-tag {
+        opacity: 1;
+      }
+
+      .credits-text {
+        margin-top: 16px;
+        font-size: 14px;
+        text-align: right;
+        opacity: 0.9;
+      }
+
+      /* Bubble chart container on page 4 */
+      .bubble-chart-wrapper {
+        margin-top: 32px;
+        width: min(900px, 92vw);
+        height: 420px;
+        margin-inline: auto;
+      }
+
+      #bubbleChart {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Line chart container on page 5 */
+      .line-chart-wrapper {
+        margin-top: 32px;
+        width: min(1000px, 94vw);
+        height: 420px;
+        margin-inline: auto;
+      }
+
+      #lineChart {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Flower chart container on its page */
+      .flower-wrapper {
+        margin-top: 32px;
+        width: min(1000px, 94vw);
+        height: 460px;
+        margin-inline: auto;
+      }
+
+      #garden {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      /* Spiral visualization container */
+      .spiral-wrapper {
+        margin-top: 32px;
+        width: min(900px, 92vw);
+        margin-inline: auto;
+      }
+
+      .spiral-controls {
+        margin-top: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .spiral-controls button {
+        padding: 6px 10px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+      }
+
+      .spiral-legend {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+      }
+
+      .spiral-legend .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .spiral-legend .legend-color {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+      }
+
+      /* World heatmap & viewmap containers */
+      .world-heatmap,
+      .world-viewmap {
+        margin-top: 32px;
+        width: min(1000px, 94vw);
+        height: 480px;
+        margin-inline: auto;
+      }
+
+      .world-heatmap svg,
+      .world-viewmap svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      /* Act 1 sibling lineup */
+      .sibling-lineup {
+        margin-top: 40px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* gap: 18px; */
+      }
+
+      .sibling-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* gap: 4px; */
+      }
+
+      .sibling-sprite {
+        width: 100px;
+        height: 100px;
+        image-rendering: pixelated;
+        object-fit: contain;
+        display: block;
+      }
+
+      .sibling-you-tag {
+        font-size: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #ffda6a;
+        display: none;
+      }
+
+      .sibling-card.is-you .sibling-you-tag {
+        display: block;
+      }
+
+      /* Use link-select cursor for interactive elements (links, buttons, inputs, role=button, onclick) */
+      a,
+      a:focus,
+      a:hover,
+      button,
+      button:focus,
+      button:hover,
+      input[type="button"],
+      input[type="submit"],
+      input[type="reset"],
+      label[for],
+      [role="button"],
+      [onclick],
+      .start-button,
+      .start-button:focus,
+      .start-button:hover {
+        cursor: url("assets/link-select.png"), pointer;
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const pages = document.querySelectorAll(".page");
+        const spacers = document.querySelectorAll(".scroll-spacer");
+        const totalPages = pages.length;
+        const siblingCards = document.querySelectorAll(".sibling-card");
+
+        function updateActivePage() {
+          const scrollPosition = window.scrollY;
+          const viewportHeight = window.innerHeight;
+          const currentPageIndex = Math.round(scrollPosition / viewportHeight);
+
+          pages.forEach((page, index) => {
+            if (index === currentPageIndex) {
+              page.classList.add("active");
+            } else {
+              page.classList.remove("active");
+            }
+          });
+        }
+
+        window.addEventListener("scroll", updateActivePage);
+        window.addEventListener("resize", updateActivePage);
+        updateActivePage(); // Initial call
+
+        // Start button: scroll to the next page when clicked
+        const startBtn = document.getElementById("startBtn");
+        if (startBtn) {
+          startBtn.addEventListener("click", function () {
+            window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+          });
+          // Swap clapper icon on hover/focus
+          const clapperImg = startBtn.querySelector(".clapper-icon");
+          if (clapperImg) {
+            const originalSrc = clapperImg.getAttribute("src");
+            const hoverSrc = "assets/clapper10.png";
+            startBtn.addEventListener("mouseenter", () =>
+              clapperImg.setAttribute("src", hoverSrc)
+            );
+            startBtn.addEventListener("mouseleave", () =>
+              clapperImg.setAttribute("src", originalSrc)
+            );
+            startBtn.addEventListener("focus", () =>
+              clapperImg.setAttribute("src", hoverSrc)
+            );
+            startBtn.addEventListener("blur", () =>
+              clapperImg.setAttribute("src", originalSrc)
+            );
+            // Touch support: toggle on touchstart and touchend
+            startBtn.addEventListener("touchstart", () =>
+              clapperImg.setAttribute("src", hoverSrc)
+            );
+            startBtn.addEventListener("touchend", () =>
+              clapperImg.setAttribute("src", originalSrc)
+            );
+          }
+        }
+
+        // Character / genre select logic
+        const cards = document.querySelectorAll(".character-card");
+
+        function selectCard(card) {
+          cards.forEach((c) => c.classList.remove("selected"));
+          card.classList.add("selected");
+
+          const genre = card.getAttribute("data-genre");
+
+          // Update sibling lineup highlight
+          if (siblingCards && siblingCards.length) {
+            siblingCards.forEach((sib) => {
+              if (sib.getAttribute("data-genre") === genre) {
+                sib.classList.add("is-you");
+              } else {
+                sib.classList.remove("is-you");
+              }
+            });
+          }
+        }
+
+        cards.forEach((card) => {
+          card.addEventListener("click", () => selectCard(card));
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectCard(card);
+            }
+          });
+        });
+      });
+    </script>
+    <script defer src="https://d3js.org/d3.v7.min.js"></script>
+    <script defer src="js/visualizations/bubble_chart.js"></script>
+    <script defer src="js/visualizations/line_chart.js"></script>
+    <script defer src="js/visualizations/flowers.js"></script>
+    <script defer src="js/visualizations/spiral.js"></script>
+    <script defer src="https://unpkg.com/topojson@3"></script>
+    <script defer src="js/visualizations/heatmap.js"></script>
+    <script defer src="js/visualizations/viewmap.js"></script>
+  </head>
+  <body>
+    <img
+      src="assets/animated-star.gif"
+      alt="Animated Star"
+      class="animated-star star-1"
+    />
+    <img
+      src="assets/animated-star-2.gif"
+      alt="Animated Star"
+      class="animated-star star-2"
+    />
+    <img
+      src="assets/animated-star-3.gif"
+      alt="Animated Star"
+      class="animated-star star-3"
+    />
+    <img
+      src="assets/animated-star.gif"
+      alt="Animated Star"
+      class="animated-star star-4"
+    />
+    <img
+      src="assets/animated-star-2.gif"
+      alt="Animated Star"
+      class="animated-star star-5"
+    />
+    <img
+      src="assets/animated-star.gif"
+      alt="Animated Star"
+      class="animated-star star-6"
+    />
+
+    <div class="page-container">
+      <div class="page active">
+        <div class="page-content">
+          <h1 class="main-title">Battle of the Genres</h1>
+          <p class="subtitle">Is your favourite show or movie genre the best?</p>
+          <button class="start-button" id="startBtn" aria-label="Start">
+            <img src="assets/clapper1.png" alt="clapper" class="clapper-icon" />
+            <span>START</span>
+          </button>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <div class="character-select-container">
+            <h1 class="character-select-heading">
+              Select a role based on your favourite genre
+            </h1>
+            <p class="character-select-subtitle">
+              These are the TOP 10 most popular genres worldwide!
+            </p>
+            <div class="genre-grid">
+              <div
+                class="character-card"
+                data-genre="Drama"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140617.png"
+                    alt="Drama character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Reporter</div>
+                <div class="genre-label">Drama</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Comedy"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140657.png"
+                    alt="Comedy character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Comedian</div>
+                <div class="genre-label">Comedy</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Documentary"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140720.png"
+                    alt="Documentary character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Scientist</div>
+                <div class="genre-label">Documentary</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Animation"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140745.png"
+                    alt="Animation character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Artist</div>
+                <div class="genre-label">Animation</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Reality"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140807.png"
+                    alt="Reality character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Pop Star</div>
+                <div class="genre-label">Reality</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Action &amp; Adventure"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140826.png"
+                    alt="Action and Adventure character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Adventurer</div>
+                <div class="genre-label">Action &amp; Adventure</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Crime"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140923.png"
+                    alt="Crime character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Thief</div>
+                <div class="genre-label">Crime</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Family"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105140950.png"
+                    alt="Family character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Teacher</div>
+                <div class="genre-label">Family</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Sci-Fi &amp; Fantasy"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105141030.png"
+                    alt="Sci-Fi and Fantasy character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Magician</div>
+                <div class="genre-label">Sci-Fi &amp; Fantasy</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+              <div
+                class="character-card"
+                data-genre="Mystery"
+                role="button"
+                tabindex="0"
+              >
+                  <img
+                    src="assets/characters/download20251105141144.png"
+                    alt="Mystery character sprite"
+                    class="character-sprite"
+                  />
+                <div class="character-name">Detective</div>
+                <div class="genre-label">Mystery</div>
+                <div class="card-you-tag">YOU</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+           <h1>
+             It's family movie night!
+           </h1>
+           <p class="subtitle">
+            You and your 9 other siblings can't
+            decide what to watch. Everyone has their own favourite genres...
+           </p>
+           
+          <div class="sibling-lineup" aria-label="Siblings and their favourite genres">
+            <div class="sibling-card" data-genre="Drama">
+              <img
+                src="assets/characters/download20251105140617.png"
+                alt="Drama sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Comedy">
+              <img
+                src="assets/characters/download20251105140657.png"
+                alt="Comedy sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Documentary">
+              <img
+                src="assets/characters/download20251105140720.png"
+                alt="Documentary sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Animation">
+              <img
+                src="assets/characters/download20251105140745.png"
+                alt="Animation sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Reality">
+              <img
+                src="assets/characters/download20251105140807.png"
+                alt="Reality sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Action &amp; Adventure">
+              <img
+                src="assets/characters/download20251105140826.png"
+                alt="Action &amp; Adventure sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Crime">
+              <img
+                src="assets/characters/download20251105140923.png"
+                alt="Crime sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Family">
+              <img
+                src="assets/characters/download20251105140950.png"
+                alt="Family sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Sci-Fi &amp; Fantasy">
+              <img
+                src="assets/characters/download20251105141030.png"
+                alt="Sci-Fi &amp; Fantasy sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+            <div class="sibling-card" data-genre="Mystery">
+              <img
+                src="assets/characters/download20251105141144.png"
+                alt="Mystery sibling"
+                class="sibling-sprite"
+              />
+              <div class="sibling-you-tag">you</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>How many popular movies and shows are within each genre?</h1>
+          <p class="subtitle">
+            Bigger bubbles = more popular genres!
+          </p>
+          <div class="bubble-chart-wrapper">
+            <div id="bubbleChart"></div>
+          </div>
+          <p>The most popular genre is <span class="most-popular-genre">Drama</span> with <span class="most-popular-count">19627</span> shows.</p>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>How has genre popularity changed over time?</h1>
+          <p class="subtitle">
+            Each line shows how many new shows started in that genre each year.
+          </p>
+          <div class="line-chart-wrapper">
+            <div id="lineChart"></div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>How do genres and themes change over time?</h1>
+          <p class="subtitle">
+            Each colored strand shows a genre & keyword along a timeline.
+          </p>
+          <div class="spiral-controls">
+            <button onclick="animateSpiral()">Replay</button>
+            <button onclick="resetSpiral()">Reset</button>
+          </div>
+          <div class="spiral-wrapper">
+            <svg id="spiral-viz"></svg>
+          </div>
+          <div class="spiral-legend" id="legend"></div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>How do studios explore different genres?</h1>
+          <p class="subtitle">
+            Each flower shows a production company and the genres it most often works in.
+          </p>
+          <div class="flower-wrapper">
+            <div id="garden"></div>
+          </div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <h1>Where are movies and shows being produced?</h1>
+          <p class="subtitle">
+            Each country's color shows how many movies and TV shows it produces.
+          </p>
+          <div class="world-heatmap" id="worldHeatmap"></div>
+        </div>
+      </div>
+      <div class="page">
+        <div class="page-content">
+          <!-- <h1>References/sources (format later)</h1> -->
+          <p class="credits-text">
+            Star animation: https://nyknck.itch.io/staranimation @nyk_nck
+            Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
+            clapper pixel art: https://jose-moyano.itch.io/clapper-pixel-art
+            https://picrew.me/en/image_maker/270210
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+  </body>
+</html>
