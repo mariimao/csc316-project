@@ -108,6 +108,31 @@ setTimeout(() => {
         nodes.append("title")
             .text(d => `${d.genre}: ${d.count} shows`);
 
+        // Helper to visually highlight a selected genre with a soft glow,
+        // without dimming the other circles.
+        function applyBubbleHighlight(selectedGenre) {
+            nodes.select("circle")
+                .attr("stroke", d => d.genre === selectedGenre ? "#ffda6a" : "#555")
+                .attr("stroke-width", d => d.genre === selectedGenre ? 4 : 1.5)
+                .style("filter", d =>
+                    d.genre === selectedGenre
+                        ? "drop-shadow(0 0 10px rgba(255, 218, 106, 0.8))"
+                        : "none"
+                );
+        }
+
+        // Expose a global hook so other parts of the page (e.g., character select)
+        // can trigger highlighting when the user picks a favourite genre.
+        window.highlightBubbleGenre = function(selectedGenre) {
+            applyBubbleHighlight(selectedGenre);
+        };
+
+        // If the user already selected a genre before the bubble chart finished loading,
+        // apply that highlight immediately.
+        if (window.selectedGenre) {
+            applyBubbleHighlight(window.selectedGenre);
+        }
+
         // Source label removed per design request
     });
 }, 100);

@@ -290,6 +290,36 @@ setTimeout(() => {
             .style("font-size", "12px")
             .style("fill", "#fff")
             .text(d => d.genre);
+
+        // Helper to subtly highlight a selected genre line with a soft glow,
+        // and emphasize its legend entry, without making other lines less prominent.
+        function applyLineHighlight(selectedGenre) {
+            genreGroup.select("path.line")
+                .style("stroke-width", d => d.genre === selectedGenre ? 3.2 : 2.5)
+                .style("filter", d =>
+                    d.genre === selectedGenre
+                        ? "drop-shadow(0 0 8px rgba(255, 218, 106, 0.8))"
+                        : "none"
+                );
+
+            legendItem.select("rect")
+                .attr("stroke", d => d.genre === selectedGenre ? "#ffda6a" : "#333")
+                .attr("stroke-width", d => d.genre === selectedGenre ? 2 : 1);
+
+            legendItem.select("text")
+                .style("fill", d => d.genre === selectedGenre ? "#ffda6a" : "#fff");
+        }
+
+        // Expose a global hook so the character selection screen can trigger a highlight.
+        window.highlightLineGenre = function(selectedGenre) {
+            applyLineHighlight(selectedGenre);
+        };
+
+        // If the user already picked a genre before the line chart finished loading,
+        // highlight that genre right away.
+        if (window.selectedGenre) {
+            applyLineHighlight(window.selectedGenre);
+        }
     });
 }, 100);
 
