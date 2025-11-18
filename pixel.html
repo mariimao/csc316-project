@@ -310,12 +310,56 @@
         opacity: 0.9;
       }
 
-      /* Bubble chart container on page 4 */
+      /* Bubble chart narrative layout */
+      .bubble-page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: 40px;
+        align-items: flex-start;
+        margin-top: 16px;
+      }
+
       .bubble-chart-wrapper {
-        margin-top: 32px;
-        width: min(900px, 92vw);
+        width: 100%;
+        max-width: 720px;
         height: 420px;
-        margin-inline: auto;
+      }
+
+      .bubble-page-text {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .bubble-page-heading {
+        font-size: 32px;
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+
+      .bubble-page-body {
+        font-size: 16px;
+        max-width: 420px;
+      }
+
+      .bubble-speech {
+        align-self: flex-end;
+        margin-top: 32px;
+        background-color: #4e558f;
+        color: #ffffff;
+        padding: 14px 20px;
+        border-radius: 8px;
+        max-width: 260px;
+        font-size: 15px;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+        position: relative;
+      }
+
+      .bubble-page-footer {
+        margin-top: 40px;
+        font-size: 16px;
+        text-align: center;
+        opacity: 0.9;
       }
 
       #bubbleChart {
@@ -412,38 +456,127 @@
 
       /* Act 1 sibling lineup */
       .sibling-lineup {
-        margin-top: 40px;
+        margin-top: 48px;
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: center;
-        /* gap: 18px; */
+        align-items: flex-end;
+        gap: 32px;
       }
 
       .sibling-card {
         display: flex;
         flex-direction: column;
         align-items: center;
-        /* gap: 4px; */
+        gap: 8px;
+        animation-name: sibling-bob;
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
       }
 
       .sibling-sprite {
-        width: 100px;
-        height: 100px;
+        width: 84px;
+        height: 84px;
         image-rendering: pixelated;
         object-fit: contain;
         display: block;
       }
 
       .sibling-you-tag {
-        font-size: 20px;
+        font-size: 14px;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #ffda6a;
+        letter-spacing: 2px;
+        color: #ffffff;
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+        margin-top: 4px;
         display: none;
       }
 
       .sibling-card.is-you .sibling-you-tag {
         display: block;
+        color: #ffda6a;
+      }
+
+      .family-night-page {
+        text-align: left;
+        align-items: flex-start;
+      }
+
+      .family-night-title {
+        font-size: 44px;
+        line-height: 1.1;
+        margin-bottom: 12px;
+      }
+
+      .family-night-title-accent {
+        color: #ffda6a;
+      }
+
+      .family-night-subtitle {
+        max-width: 720px;
+      }
+
+      .family-night-link {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .family-night-note {
+        margin-top: 24px;
+        font-size: 14px;
+        color: #aaaaaa;
+        font-style: italic;
+      }
+
+      @keyframes sibling-bob {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-25px);
+        }
+      }
+
+      .sibling-card:nth-child(1) {
+        animation-duration: 0.5s;
+      }
+
+      .sibling-card:nth-child(2) {
+        animation-duration: 0.9s;
+      }
+
+      .sibling-card:nth-child(3) {
+        animation-duration: 0.5s;
+      }
+
+      .sibling-card:nth-child(4) {
+        animation-duration: 0.4s;
+      }
+
+      .sibling-card:nth-child(5) {
+        animation-duration: 0.7s;
+      }
+
+      .sibling-card:nth-child(6) {
+        animation-duration: 1.0s;
+      }
+
+      .sibling-card:nth-child(7) {
+        animation-duration: 0.4s;
+      }
+
+      .sibling-card:nth-child(8) {
+        animation-duration: 0.8s;
+      }
+
+      .sibling-card:nth-child(9) {
+        animation-duration: 0.6s;
+      }
+
+      .sibling-card:nth-child(10) {
+        animation-duration: 0.6s;
       }
 
       /* Use link-select cursor for interactive elements (links, buttons, inputs, role=button, onclick) */
@@ -772,15 +905,16 @@
         </div>
       </div>
       <div class="page">
-        <div class="page-content">
-           <h1>
-             It's family movie night!
-           </h1>
-           <p class="subtitle">
-            You and your 9 other siblings can't
-            decide what to watch. Everyone has their own favourite genres...
-           </p>
-           
+        <div class="page-content family-night-page">
+          <h1 class="family-night-title">
+            It’s family movie night! <span class="family-night-title-accent">But…</span>
+          </h1>
+          <p class="subtitle family-night-subtitle">
+            You and your 9 siblings can’t agree on what to watch.
+            Everyone has a
+            <span class="family-night-link">different favourite genre.</span>
+          </p>
+
           <div class="sibling-lineup" aria-label="Siblings and their favourite genres">
             <div class="sibling-card" data-genre="Drama">
               <img
@@ -788,7 +922,7 @@
                 alt="Drama sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Comedy">
               <img
@@ -796,7 +930,7 @@
                 alt="Comedy sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Documentary">
               <img
@@ -804,7 +938,7 @@
                 alt="Documentary sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Animation">
               <img
@@ -812,7 +946,7 @@
                 alt="Animation sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Reality">
               <img
@@ -820,7 +954,7 @@
                 alt="Reality sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Action &amp; Adventure">
               <img
@@ -828,7 +962,7 @@
                 alt="Action &amp; Adventure sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Crime">
               <img
@@ -836,7 +970,7 @@
                 alt="Crime sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Family">
               <img
@@ -844,7 +978,7 @@
                 alt="Family sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Sci-Fi &amp; Fantasy">
               <img
@@ -852,7 +986,7 @@
                 alt="Sci-Fi &amp; Fantasy sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
             <div class="sibling-card" data-genre="Mystery">
               <img
@@ -860,32 +994,81 @@
                 alt="Mystery sibling"
                 class="sibling-sprite"
               />
-              <div class="sibling-you-tag">you</div>
+              <div class="sibling-you-tag">YOU</div>
             </div>
           </div>
+
+          <p class="subtitle family-night-subtitle" style="margin-top: 120px;">
+            To help decide, you look at the top 500,000 most popular movies and TV shows.
+          </p>
         </div>
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>How many popular movies and shows are within each genre?</h1>
-          <p class="subtitle">
-            Bigger bubbles = more popular genres!
-          </p>
-          <div class="bubble-chart-wrapper">
-            <div id="bubbleChart"></div>
+          <h1 class="bubble-page-heading">
+            Maybe we should see which has the most options out of the most popular?
+          </h1>
+
+          <div class="bubble-page-layout">
+            <div class="bubble-chart-wrapper">
+              <div id="bubbleChart"></div>
+            </div>
+
+            <div class="bubble-page-text">
+              <p class="bubble-page-body">
+                <strong>Drama</strong> dwarfs everything else, with
+                <span class="most-popular-count">19627</span> shows, making it the
+                most popular genre overall.
+              </p>
+              <div class="bubble-speech">
+                There’s too much drama in real life already
+              </div>
+              <div class="bubble-speech">
+                But the other ones are almost as big!
+              </div>
+              <div class="bubble-speech">
+                I want to watch something recently made!
+              </div>
+            </div>
           </div>
-          <p>The most popular genre is <span class="most-popular-genre">Drama</span> with <span class="most-popular-count">19627</span> shows.</p>
+
+          <p class="bubble-page-footer">
+            None of you have reached a conclusion.
+          </p>
         </div>
       </div>
       <div class="page">
         <div class="page-content">
-          <h1>How has genre popularity changed over time?</h1>
-          <p class="subtitle">
-            Each line shows how many new shows started in that genre each year.
-          </p>
-          <div class="line-chart-wrapper">
-            <div id="lineChart"></div>
+          <h1 class="bubble-page-heading">
+            Ok, how about splitting it by year started?
+          </h1>
+
+          <div class="bubble-page-layout">
+            <div class="line-chart-wrapper">
+              <div id="lineChart"></div>
+            </div>
+
+            <div class="bubble-page-text">
+              <p class="bubble-page-body">
+                <strong>Drama</strong> still has the most. However, there’s a big spike in
+                <strong> documentary</strong> and
+                <strong> reality</strong> shows.
+              </p>
+              <div class="bubble-speech">
+                ...is it just because of better technology and camera?
+              </div>
+              <div class="bubble-speech">
+                but drama is so vague!
+              </div>
+              <div class="bubble-speech">
+                maybe its better to see what key themes?
+              </div>
+            </div>
           </div>
+
+          <p class="bubble-page-footer">
+            None of you have reached a conclusion.
+          </p>
         </div>
       </div>
       <div class="page">
