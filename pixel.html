@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TODO: CHANGE THIS TITLE LATER</title>
+    <title>Battle of the Genres</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
       @font-face {
@@ -306,17 +306,35 @@
       .credits-text {
         margin-top: 16px;
         font-size: 14px;
-        text-align: right;
         opacity: 0.9;
+        list-style: none;
+        padding: 0;
+        max-width: 720px;
+        margin-inline: auto;
       }
 
-      /* Bubble chart narrative layout */
+      .credits-text li {
+        display: flex;
+        justify-content: flex-start;
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+
+      .credit-label {
+        flex: 0 0 45%;
+        text-align: right;
+        font-weight: 600;
+      }
+
+      .credit-value {
+        flex: 0 0 55%;
+        text-align: left;
+      }
+
       .bubble-page-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-        gap: 40px;
-        align-items: flex-start;
-        margin-top: 16px;
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
       }
 
       .bubble-chart-wrapper {
@@ -665,6 +683,9 @@
 
           const genre = card.getAttribute("data-genre");
 
+          // Store the currently selected genre globally so other visualizations can react
+          window.selectedGenre = genre;
+
           // Update sibling lineup highlight
           if (siblingCards && siblingCards.length) {
             siblingCards.forEach((sib) => {
@@ -674,6 +695,26 @@
                 sib.classList.remove("is-you");
               }
             });
+          }
+
+          // Highlight the corresponding genre in the bubble chart, if it has loaded
+          if (typeof window.highlightBubbleGenre === "function") {
+            window.highlightBubbleGenre(genre);
+          }
+
+          // Highlight the corresponding genre in the line chart, if it has loaded
+          if (typeof window.highlightLineGenre === "function") {
+            window.highlightLineGenre(genre);
+          }
+
+          // Highlight the corresponding genre in the spiral visualization, if it has loaded
+          if (typeof window.highlightSpiralGenre === "function") {
+            window.highlightSpiralGenre(genre);
+          }
+
+          // Highlight the corresponding genre in the flowers visualization, if it has loaded
+          if (typeof window.highlightFlowerGenre === "function") {
+            window.highlightFlowerGenre(genre);
           }
         }
 
@@ -730,6 +771,8 @@
     />
 
     <div class="page-container">
+
+      <!-- Page 1: Title Screen -->
       <div class="page active">
         <div class="page-content">
           <h1 class="main-title">Battle of the Genres</h1>
@@ -740,14 +783,16 @@
           </button>
         </div>
       </div>
+
+      <!-- Page 2: Character Select Screen -->
       <div class="page">
         <div class="page-content">
           <div class="character-select-container">
             <h1 class="character-select-heading">
               Select a role based on your favourite genre
             </h1>
-            <p class="character-select-subtitle">
-              These are the TOP 10 most popular genres worldwide!
+            <p class="character-select-subtitle" style="color: #ffda6a;">
+              Watch out later for the ones highlighted in yellow!
             </p>
             <div class="genre-grid">
               <div
@@ -904,6 +949,8 @@
           </div>
         </div>
       </div>
+
+      <!-- Page 3: Introduce Problem -->
       <div class="page">
         <div class="page-content family-night-page">
           <h1 class="family-night-title">
@@ -1003,124 +1050,171 @@
           </p>
         </div>
       </div>
+
+      <!-- Page 4: Global Production Heatmap -->
+      <div class="page">
+        <div class="page-content">
+          <h1 class="bubble-page-heading">Before we choose, let’s see what’s out there in the world.</h1>
+          <p class="subtitle">
+            Hover over a country to see the top 10 most-watched shows there, based on
+            weekly popularity.
+          </p>
+          <div class="world-viewmap" id="worldViewmap"></div>
+        </div>
+      </div>
+      
+      
+      <!-- Page 5: Bubble Chart -->
       <div class="page">
         <div class="page-content">
           <h1 class="bubble-page-heading">
-            Maybe we should see which has the most options out of the most popular?
+            Which genres is the biggest out of the most popular?
           </h1>
+          <p class="subtitle">
+            <strong>Drama</strong> is the largest, followed by other major genres like <strong>Comedy</strong> and <strong>Animation</strong>.
 
-          <div class="bubble-page-layout">
+          </p>
+
             <div class="bubble-chart-wrapper">
               <div id="bubbleChart"></div>
             </div>
-
-            <div class="bubble-page-text">
-              <p class="bubble-page-body">
-                <strong>Drama</strong> dwarfs everything else, with
-                <span class="most-popular-count">19627</span> shows, making it the
-                most popular genre overall.
-              </p>
-              <div class="bubble-speech">
-                There’s too much drama in real life already
-              </div>
-              <div class="bubble-speech">
-                But the other ones are almost as big!
-              </div>
-              <div class="bubble-speech">
-                I want to watch something recently made!
-              </div>
-            </div>
-          </div>
-
-          <p class="bubble-page-footer">
-            None of you have reached a conclusion.
-          </p>
         </div>
       </div>
+
+      <!-- Page 6: Line Chart -->
       <div class="page">
         <div class="page-content">
-          <h1 class="bubble-page-heading">
-            Ok, how about splitting it by year started?
-          </h1>
+          <h1 class="bubble-page-heading">But, has it always been like that?</h1>
+          <p class="subtitle">
+            It seems like Drama has always been the largest, but Documentary and Reality have been growing fast. 
+          </p>
+          <div class="line-chart-wrapper">
+            <div id="lineChart"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Page 7: Spiral Chart -->
+      <div class="page">
+        <div class="page-content">
 
           <div class="bubble-page-layout">
-            <div class="line-chart-wrapper">
-              <div id="lineChart"></div>
-            </div>
-
             <div class="bubble-page-text">
               <p class="bubble-page-body">
-                <strong>Drama</strong> still has the most. However, there’s a big spike in
-                <strong> documentary</strong> and
-                <strong> reality</strong> shows.
+                Use the controls to replay or reset the rings and see how key themes weave
+                through the months.Use the controls to replay or reset the rings and see how key themes weave
+                through the months.
               </p>
-              <div class="bubble-speech">
-                ...is it just because of better technology and camera?
+              <div class="spiral-controls">
+                <button onclick="animateSpiral()">Replay</button>
+                <button onclick="resetSpiral()">Reset</button>
               </div>
-              <div class="bubble-speech">
-                but drama is so vague!
+
+              <h1 class="bubble-page-heading">What if we take a closer look at it month-by-month?</h1>
+
+              <p class="bubble-page-body">
+                Romance and love are most popular in February. Horror and fear are most popular October.
+              </p>
+              <p class="bubble-page-body">
+                But since we are in November, we should watch... Drama and emotion?
+              </p>
+              <p class="bubble-page-body">
+                No, there’s already too much family drama going on.
+              </p>
+            </div>
+
+            <div>
+              <div class="spiral-wrapper">
+                <svg id="spiral-viz"></svg>
               </div>
-              <div class="bubble-speech">
-                maybe its better to see what key themes?
-              </div>
+              <div class="spiral-legend" id="legend"></div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <p class="bubble-page-footer">
-            None of you have reached a conclusion.
-          </p>
-        </div>
-      </div>
+      <!-- Page 8: Flower Chart -->
       <div class="page">
         <div class="page-content">
-          <h1>How do genres and themes change over time?</h1>
+          <h1 class="bubble-page-heading">What if we see what some experienced studios think is worth making?</h1>
           <p class="subtitle">
-            Each colored strand shows a genre & keyword along a timeline.
-          </p>
-          <div class="spiral-controls">
-            <button onclick="animateSpiral()">Replay</button>
-            <button onclick="resetSpiral()">Reset</button>
-          </div>
-          <div class="spiral-wrapper">
-            <svg id="spiral-viz"></svg>
-          </div>
-          <div class="spiral-legend" id="legend"></div>
-        </div>
-      </div>
-      <div class="page">
-        <div class="page-content">
-          <h1>How do studios explore different genres?</h1>
-          <p class="subtitle">
-            Each flower shows a production company and the genres it most often works in.
+            But it seems many studios work with many different genres and don't stick to only one category.
           </p>
           <div class="flower-wrapper">
             <div id="garden"></div>
           </div>
         </div>
       </div>
+
+      <!-- Page 9: Revelation -->
       <div class="page">
         <div class="page-content">
-          <h1>Where are movies and shows being produced?</h1>
-          <p class="subtitle">
-            Each country's color shows how many movies and TV shows it produces.
-          </p>
-          <div class="world-heatmap" id="worldHeatmap"></div>
+          <h1 class="bubble-page-heading">No studios stick to only one category?</h1>
         </div>
       </div>
+
+      <!-- Page 10: Revelation -->
       <div class="page">
         <div class="page-content">
-          <!-- <h1>References/sources (format later)</h1> -->
-          <p class="credits-text">
-            Star animation: https://nyknck.itch.io/staranimation @nyk_nck
-            Background: 198X by Hi-Bit Studios Cursor: https://toumeya.itch.io/
-            clapper pixel art: https://jose-moyano.itch.io/clapper-pixel-art
-            https://picrew.me/en/image_maker/270210
+          <h1 class="bubble-page-heading">Maybe you and your siblings should do the same.</h1>
+        </div>
+      </div>
+
+      <!-- Page 11: Revelation -->
+      <div class="page">
+        <div class="page-content">
+          <h1 class="bubble-page-heading">Maybe there isn’t a best single genre. Every genre has something to offer, and the differences aren’t as important as they first seemed.</h1>
+        </div>
+      </div>
+
+      <!-- Page 12: Revelation -->
+      <div class="page">
+        <div class="page-content">
+          <h1 class="bubble-page-heading">You and your siblings randomly pick a show and start watching. Even if not everyone agrees on the genre, at least you are all watching it together.</h1>
+          <p class="subtitle">
+            In the end, the show matters less than the people you watch it with.
           </p>
+          </div>
+      </div>
+
+
+
+      <!-- Page 13: Credits -->
+      <div class="page">
+        <div class="page-content">
+          <h1>References/image credits</h1>
+          <ul class="credits-text">
+            <li>
+              <span class="credit-label">Star animation</span>
+              <span class="credit-value">https://nyknck.itch.io/staranimation @nyk_nck</span>
+            </li>
+            <li>
+              <span class="credit-label">Background</span>
+              <span class="credit-value">198X by Hi-Bit Studios</span>
+            </li>
+            <li>
+              <span class="credit-label">Cursor</span>
+              <span class="credit-value">https://toumeya.itch.io/</span>
+            </li>
+            <li>
+              <span class="credit-label">Clapper pixel art</span>
+              <span class="credit-value">https://jose-moyano.itch.io/clapper-pixel-art</span>
+            </li>
+            <li>
+              <span class="credit-label">Character maker</span>
+              <span class="credit-value">https://picrew.me/en/image_maker/270210</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
 
     <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
+    <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>

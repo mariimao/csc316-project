@@ -10,6 +10,29 @@
 
 let tmdbMovies = [];
 
+// Map the broader character-selection genres into the movie genres
+// used in this flowers visualization.
+function mapGenreForFlowers(selectedGenre) {
+    if (!selectedGenre) return null;
+    const g = String(selectedGenre).toLowerCase();
+
+    if (g.includes("action")) return "Action";
+    if (g.includes("sci-fi") || g.includes("sci fi") || g.includes("science")) return "Science Fiction";
+    if (g.includes("fantasy")) return "Fantasy";
+    if (g.includes("animation")) return "Animation";
+    if (g.includes("documentary")) return "Documentary";
+    if (g.includes("drama")) return "Drama";
+    if (g.includes("comedy")) return "Comedy";
+    if (g.includes("crime")) return "Crime";
+    if (g.includes("family")) return "Family";
+    if (g.includes("mystery")) return "Mystery";
+    if (g.includes("horror")) return "Horror";
+    if (g.includes("romance")) return "Romance";
+    if (g.includes("thriller")) return "Thriller";
+
+    return null;
+}
+
 /**
  * Load movie data and initialize the flowers visualization
  */
@@ -233,6 +256,8 @@ function drawFlowers(flowers) {
         d.petals.forEach((p, i) => {
             const angle = (i / k) * 360;
             group.append("ellipse")
+                .attr("class", "flower-petal")
+                .attr("data-genre", p.genre)
                 .attr("cx", 0).attr("cy", -ry*0.7)
                 .attr("rx", rx).attr("ry", ry)
                 .attr("transform", `rotate(${angle})`)
@@ -249,6 +274,40 @@ function drawFlowers(flowers) {
         .attr("cy", d => -stemH(d.total))
         .attr("r", 12)
         .attr("fill", "#ffffff").attr("stroke","#b98a1e");
+
+    // Helper to subtly highlight petals belonging to the selected genre,
+    // without dimming any other petals.
+    function applyFlowerHighlight(selectedGenre) {
+        const mapped = mapGenreForFlowers(selectedGenre);
+
+        const petals = svg.selectAll(".flower-petal");
+
+        // Reset all petals
+        petals
+            .attr("stroke-width", 1)
+            .style("filter", "none");
+
+        if (!mapped) return;
+
+        // Highlight petals whose genre matches the mapped genre
+        petals
+            .filter(function() {
+                return d3.select(this).attr("data-genre") === mapped;
+            })
+            .attr("stroke-width", 2.2)
+            .style("filter", "drop-shadow(0 0 8px rgba(255, 218, 106, 0.9))");
+    }
+
+    // Expose a global hook so other parts of the page can trigger flower highlighting.
+    window.highlightFlowerGenre = function(selectedGenre) {
+        applyFlowerHighlight(selectedGenre);
+    };
+
+    // If the user already picked a genre before the flowers finished loading,
+    // apply that highlight immediately.
+    if (window.selectedGenre) {
+        applyFlowerHighlight(window.selectedGenre);
+    }
 }
 
 // Initialize on load
