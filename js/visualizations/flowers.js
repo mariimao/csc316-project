@@ -222,13 +222,14 @@ function drawFlowers(flowers) {
         .attr("text-anchor", "middle")
         .style("font-size", titleFontSize)
         .style("font-weight", 700)
-        .text("Production Company and the Genres They Explored as Flowers");
+        .text("Production Company and the Genres They Explored as Flowers")
+        .style("fill", "#ffffff");
     
     g.append("text")
         .attr("transform","rotate(-90)")
         .attr("x", -innerH/2).attr("y", isMobile ? -30 : -40)
         .attr("text-anchor","middle")
-        .style("fill","#666")
+        .style("fill","#ffffff")
         .style("font-size", labelFontSize)
         .text("# of works (stem height)");
 
@@ -243,7 +244,7 @@ function drawFlowers(flowers) {
     flowerG.append("line")
         .attr("y1", 0)
         .attr("y2", d => -stemH(d.total))
-        .attr("stroke", "#333")
+        .attr("stroke", "#7ed998")
         .attr("stroke-width", 2)
         .attr("stroke-linecap", "round");
 
