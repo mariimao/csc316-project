@@ -9,24 +9,109 @@
   --max-width: 1100px;
 }
 
+body,
+html,
+h1, h2, h3, h4, h5, h6,
+p, span, div,
+button,
+input,
+.chip,
+.genre-search,
+.control-btn,
+.legend-item,
+.placeholder__label {
+    font-family: "Press Start 2P", "Courier New", monospace !important;
+}
+
+/* Adjust sizes since pixel fonts render larger */
+body {
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+h1, .billboard-title {
+    font-size: clamp(16px, 3vw, 24px) !important;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+}
+
+h2 {
+    font-size: clamp(14px, 2.5vw, 18px) !important;
+    line-height: 1.5;
+}
+
+h3 {
+    font-size: clamp(12px, 2vw, 16px) !important;
+    line-height: 1.5;
+}
+
+p, .subtitle {
+    font-size: clamp(10px, 1.5vw, 12px) !important;
+    line-height: 1.7;
+}
+
+button, .chip, .control-btn {
+    font-size: clamp(9px, 1.2vw, 11px) !important;
+    padding: 8px 16px;
+    line-height: 1.5;
+}
+
+input, .genre-search {
+    font-size: clamp(9px, 1.2vw, 11px) !important;
+    line-height: 1.5;
+}
+
+.sponsor {
+    font-size: clamp(9px, 1.2vw, 11px) !important;
+}
+
+.billboard-sub {
+    font-size: clamp(10px, 1.5vw, 12px) !important;
+}
+
+.open-hint {
+    font-size: 11px !important;
+}
+
+/* Adjust spacing for pixel font readability */
+.stage {
+    margin-bottom: 3rem;
+}
+
+.stage p {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
 /* Reset and base */
 * {
   box-sizing: border-box;
 }
 html,
 body {
-  height: 100%;
-  margin: 0;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial;
-  color: #fff;
-  background: var(--bg);
+    position: relative;
 }
 
-/* Page layout */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../gif/pixel-background.GIF');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.content {
+    background: transparent !important;
+}
+
 .reveal-content {
-  min-height: 200vh;
-  background: linear-gradient(180deg, #000 0%, var(--bg) 40%, #111 100%);
+    background: transparent !important;
 }
 .hero {
   height: 100vh;
@@ -49,7 +134,7 @@ body {
 
 .content {
   padding: 4rem 2rem;
-  background: #000;
+  background: rgba(0, 0, 0, 0.7);
   color: #eee;
   display: flex;
   flex-direction: column;
@@ -66,6 +151,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background:  transparent !important;
 }
 
 /* Cards and small UI blocks */
@@ -88,6 +174,7 @@ body {
   justify-content: center;
   padding: 10px 0;
   backdrop-filter: blur(6px) saturate(120%);
+  background: transparent !important;
 }
 .selector-inner {
   width: 100%;
@@ -96,7 +183,7 @@ body {
   gap: 12px;
   align-items: center;
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.28);
+  background: rgba(0, 0, 0, 0.5) !important;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.02);
 }
@@ -395,6 +482,30 @@ body {
   z-index: 9999;
   overflow: hidden;
 }
+
+.curtain-stage[aria-hidden="true"] {
+    pointer-events: none;
+    opacity: 0;
+}
+
+.reveal-content {
+    position: relative;
+    z-index: 1;
+}
+
+.reveal-content::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../gif/pixel-background.GIF');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+}
 .curtain {
   position: absolute;
   top: 0;
@@ -517,6 +628,11 @@ body {
   z-index: 10002;
   pointer-events: none;
   transition: opacity 360ms ease, transform 360ms ease;
+}
+.curtain-stage[aria-hidden="true"] .curtain-billboard {
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
 }
 .curtain-billboard .sponsor {
   font-size: 14px;

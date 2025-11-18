@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>CSC316 Spectrum</title>
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CSC316 Spectrum</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-<body>
-  <div class="curtain-stage" id="curtainStage">
-    <div class="curtain left" id="curtainLeft"></div>
-    <div class="curtain right" id="curtainRight"></div>
-    <button class="open-hint" id="openHint" aria-label="Open curtains">
-      Scroll to open ↓
-    </button>
-  </div>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="curtain-stage" id="curtainStage">
+      <div class="curtain left" id="curtainLeft"></div>
+      <div class="curtain right" id="curtainRight"></div>
 
-  <main class="reveal-content">
-    <section class="hero">
-      <div class="container-fluid">
-        <div class="curtain-billboard">
+            <div class="curtain-billboard">
+                <div class="sponsor">
+                    brought to you by <strong>Spectrum Film Festival</strong>
+                </div>
+                <h2 class="billboard-title">
+                    A closer look into the stories we crave
+                </h2>
+                <div class="billboard-sub">
+                    what genres say about us and the world
+                </div>
+            </div>
+
+            <button class="open-hint" id="openHint">
+                Scroll to open ↓
+            </button>
+        </div>
+
+        <main class="reveal-content">
+            <section class="hero">
+                <div class="container-fluid">
+
           <div class="sponsor">
             brought to you by <strong>Spectrum Film Festival</strong>
           </div>
@@ -174,10 +189,10 @@
             <h1>Netflix Genre & Keyword Spiral Over Time</h1>
             <p class="subtitle">Which genres and keywords are most common at different times?</p>
 
-            <div class="controls">
-              <button class="control-btn" onclick="animateSpiral()">🔄 Animate</button>
-              <button class="control-btn" onclick="resetSpiral()">↺ Reset</button>
-            </div>
+              <div class="controls">
+                  <button class="control-btn" onclick="window.animateSpiral()"> Animate</button>
+                  <button class="control-btn" onclick="window.resetSpiral()">↺ Reset</button>
+              </div>
 
             <div style="width: 100%; max-width: 800px; margin: 0 auto;">
               <svg id="spiral-viz"></svg>
