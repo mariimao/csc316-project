@@ -14,7 +14,6 @@
         { time: 'Dec', genre: 'Romance', keyword: 'holiday', popularity: 95 }
     ];
 
-    // FALL NEUTRAL PASTEL COLORS - no pink!
     const genreColors = {
         'Drama': '#D4A574',        // Warm tan
         'Romance': '#C9A66B',      // Muted gold
