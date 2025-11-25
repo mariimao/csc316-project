@@ -113,6 +113,7 @@
             .attr('stroke', genreColors[d.genre])
             .attr('stroke-width', baseStrokeWidth)
             .attr('fill', 'none')
+            .attr('data-genre', d.genre)
             .attr('opacity', 0)  // Start invisible
             .attr('stroke-dasharray', function() {
                 return this.getTotalLength();
@@ -200,7 +201,9 @@
     const legend = d3.select('#legend');
     legend.selectAll('*').remove(); // Clear existing
     Object.entries(genreColors).forEach(([genre, color]) => {
-        const item = legend.append('div').attr('class', 'legend-item');
+        const item = legend.append('div')
+            .attr('class', 'legend-item')
+            .attr('data-genre', genre);
         item.append('div')
             .attr('class', 'legend-color')
             .style('background-color', color);
@@ -210,6 +213,63 @@
             .style('font-size', '11px')
             .text(genre);
     });
+
+    // Map the broader character-selection genres into the simplified spiral genres.
+    function mapGenreForSpiral(selectedGenre) {
+        if (!selectedGenre) return null;
+        // Normalise for easy matching
+        const g = selectedGenre.toLowerCase();
+        if (g.includes('action')) return 'Action';
+        if (g.includes('sci-fi') || g.includes('sci fi') || g.includes('science')) return 'Sci-Fi';
+        if (g.includes('documentary')) return 'Documentary';
+        if (g.includes('drama')) return 'Drama';
+        if (g.includes('comedy')) return 'Comedy';
+        if (g.includes('horror')) return 'Horror';
+        if (g.includes('thriller')) return 'Thriller';
+        if (g.includes('romance')) return 'Romance';
+        return null;
+    }
+
+    // Helper to subtly highlight the selected genre in the spiral and its legend,
+    // without dimming the others.
+    function applySpiralHighlight(selectedGenre) {
+        const mapped = mapGenreForSpiral(selectedGenre);
+
+        // Reset all paths to their base appearance
+        svg.selectAll('.spiral-path')
+            .attr('stroke-width', baseStrokeWidth)
+            .style('filter', 'none');
+
+        // Reset legend styles
+        const legendItems = legend.selectAll('.legend-item');
+        legendItems.select('.legend-color')
+            .style('box-shadow', 'none')
+            .style('border', '1px solid transparent');
+        legendItems.select('span')
+            .style('color', '#D4C5B0');
+
+        if (!mapped) return;
+
+        // Highlight matching spiral segments with a slightly thicker stroke + soft glow
+        svg.selectAll('.spiral-path')
+            .filter(function() {
+                return d3.select(this).attr('data-genre') === mapped;
+            })
+            .attr('stroke-width', baseStrokeWidth * 1.25)
+            .style('filter', 'drop-shadow(0 0 10px rgba(255, 218, 106, 0.9))');
+
+        // Highlight corresponding legend entry
+        const activeLegend = legendItems.filter(function() {
+            return d3.select(this).attr('data-genre') === mapped;
+        });
+
+        activeLegend.select('.legend-color')
+            .style('box-shadow', '0 0 8px rgba(255, 218, 106, 0.8)')
+            .style('border', '2px solid #ffda6a');
+
+        activeLegend.select('span')
+            .style('color', '#ffda6a');
+    }
 
     // ANIMATION FUNCTION - draws the spiral in
     function animateSpiral() {
@@ -253,16 +313,22 @@
     // Expose functions globally
     window.animateSpiral = animateSpiral;
     window.resetSpiral = resetSpiral;
+    window.highlightSpiralGenre = function(selectedGenre) {
+        applySpiralHighlight(selectedGenre);
+    };
 
     // Debug logs
     console.log('✓ Spiral.js loaded with pastel colors');
     console.log('✓ SVG found:', !svg.empty());
     console.log('✓ Data points:', timelineData.length);
 
-    // Auto-animate on load
+    // Auto-animate on load, and if a genre was chosen earlier, highlight it.
     setTimeout(function() {
         console.log('⏱ Auto-animation starting...');
         animateSpiral();
+        if (window.selectedGenre) {
+            applySpiralHighlight(window.selectedGenre);
+        }
     }, 800);
 
 })();
