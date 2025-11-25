@@ -733,10 +733,10 @@
     <script defer src="js/visualizations/bubble_chart.js"></script>
     <script defer src="js/visualizations/line_chart.js"></script>
     <script defer src="js/visualizations/flowers.js"></script>
-    <script defer src="js/visualizations/spiral.js"></script>
     <script defer src="https://unpkg.com/topojson@3"></script>
     <script defer src="js/visualizations/heatmap.js"></script>
-    <script defer src="js/visualizations/viewmap.js"></script>
+    <script defer src="js/visualizations/popcorn-config.js"></script>
+    <script defer src="js/visualizations/popcorn-viz.js"></script>
   </head>
   <body>
     <img
@@ -1095,21 +1095,20 @@
         </div>
       </div>
 
-      <!-- Page 7: Spiral Chart -->
-      <div class="page">
-        <div class="page-content">
+        <div class="page">
+            <div class="page-content">
+                <h1 class="bubble-page-heading">Click on the popcorn to get a movie recommendation!</h1>
+                <p class="subtitle">Watch genres pop like kernels - Click popped popcorn for movie fortune! </p>
 
-          <div class="bubble-page-layout">
-            <div class="bubble-page-text">
-              <p class="bubble-page-body">
-                Use the controls to replay or reset the rings and see how key themes weave
-                through the months.Use the controls to replay or reset the rings and see how key themes weave
-                through the months.
-              </p>
-              <div class="spiral-controls">
-                <button onclick="animateSpiral()">Replay</button>
-                <button onclick="resetSpiral()">Reset</button>
-              </div>
+                <div class="controls">
+                    <button class="control-btn" onclick="window.popPopcorn()">🍿 Pop!</button>
+                    <button class="control-btn" onclick="window.resetPopcorn()">↻ Reset</button>
+                    <button class="control-btn" onclick="window.popAllSequence()">⚡ Auto Pop</button>
+                </div>
+
+                <svg id="popcorn-stage" width="100%" height="600" viewBox="0 0 1200 600"></svg>
+            </div>
+        </div>
 
               <h1 class="bubble-page-heading">What if we take a closer look at it month-by-month?</h1>
 
