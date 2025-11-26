@@ -7,22 +7,35 @@
 function getBubbleChartDimensions() {
     const container = d3.select("#bubbleChart").node();
     if (!container) return { width: 800, height: 500 };
-    
+
     // Wait for container to be available, use offsetWidth as fallback
     const containerWidth = container.clientWidth || container.offsetWidth || window.innerWidth - 40;
     const containerHeight = container.clientHeight || container.offsetHeight || 500;
-    
+
     // Use container width, maintain aspect ratio, ensure minimum size
     const maxWidth = Math.min(800, window.innerWidth - 40);
     const width = Math.max(300, Math.min(containerWidth || maxWidth, maxWidth));
     const height = Math.max(400, Math.min(width * 0.625, containerHeight || 500, 500));
-    
+
     return { width, height };
 }
 
 // Initialize with a small delay to ensure DOM is ready
 setTimeout(() => {
     const { width, height } = getBubbleChartDimensions();
+    const tooltip = d3.select("body")
+        .append("div")
+        .attr("id", "bubbleTooltip")
+        .style("position", "absolute")
+        .style("padding", "8px 12px")
+        .style("background", "rgba(0,0,0,0.8)")
+        .style("color", "white")
+        .style("border-radius", "4px")
+        .style("font-size", "18px")
+        .style("pointer-events", "none")
+        .style("opacity", 0)
+        .style("transition", "opacity 0.2s");
+
     const legendRectSize = 18;
     const legendSpacing = 4;
 
@@ -48,7 +61,7 @@ setTimeout(() => {
         });
 
         let genresArray = Object.keys(genreCounts).map(genre => ({
-            genre,
+                genre,
             count: genreCounts[genre]
         }));
 
@@ -95,7 +108,7 @@ setTimeout(() => {
 
         // Responsive font size based on container width
         const baseFontSize = Math.max(10, Math.min(13, width / 60));
-        
+
         nodes.append("text")
             .text(d => d.genre)
             .attr("text-anchor", "middle")
@@ -105,8 +118,21 @@ setTimeout(() => {
             .style("fill", "#ffffffff")
             .style("pointer-events", "none");
 
-        nodes.append("title")
-            .text(d => `${d.genre}: ${d.count} shows`);
+        nodes.on("mouseover", (event, d) => {
+            tooltip.style("opacity", 1)
+                .html(`
+                <strong>${d.genre}</strong><br>
+                Total shows: ${d.count}<br>
+            `);
+        })
+            .on("mousemove", event => {
+                tooltip
+                    .style("left", (event.pageX + 15) + "px")
+                    .style("top", (event.pageY + 15) + "px");
+            })
+            .on("mouseout", () => {
+                tooltip.style("opacity", 0);
+            });
 
         // Helper to visually highlight a selected genre with a soft glow,
         // without dimming the other circles.
@@ -123,7 +149,7 @@ setTimeout(() => {
 
         // Expose a global hook so other parts of the page (e.g., character select)
         // can trigger highlighting when the user picks a favourite genre.
-        window.highlightBubbleGenre = function(selectedGenre) {
+        window.highlightBubbleGenre = function (selectedGenre) {
             applyBubbleHighlight(selectedGenre);
         };
 
