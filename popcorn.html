@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popcorn Kernel Burst</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/popcorn-styles.css">
+</head>
+<body>
+<div class="container">
+    <h1> Popcorn Popularity Burst</h1>
+    <p class="subtitle">Watch genres pop like kernels - Click popped popcorn for movie fortune! 🥠</p>
+
+    <div class="controls">
+        <button class="control-btn" onclick="window.popPopcorn()"> Pop!</button>
+        <button class="control-btn" onclick="window.resetPopcorn()">↻ Reset</button>
+        <button class="control-btn" onclick="window.popAllSequence()"> Auto Pop</button>
+    </div>
+
+    <svg id="popcorn-stage" width="100%" height="600" viewBox="0 0 1200 600"></svg>
+
+    <div class="legend" id="legend"></div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script src="js/visualizations/popcorn-config.js"></script>
+<script src="js/visualizations/popcorn-viz.js"></script>
+</body>
+</html>

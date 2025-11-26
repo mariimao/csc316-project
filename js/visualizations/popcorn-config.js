@@ -1,4 +1,3 @@
-popcorn-viz.js// Configuration for Popcorn Kernel Burst visualization
 
 const GENRE_COLORS = {
     'Drama': '#D4A574',
