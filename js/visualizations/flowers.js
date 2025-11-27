@@ -1,6 +1,6 @@
 /**
  * Flowers Visualization
- * Code assisted by ChatGPT 5
+ * Code assisted by ChatGPT 5 and Gemini
  *
  * This module handles:
  * - Loading and preparing movie data
@@ -172,7 +172,7 @@ function prepareMovies(rows) {
  *
  * Returns flowers in the structure of:
  * [
- *     {company: ..., total: total number of genres, petals: [{genre: genreName, score: normalized average popularity of the genres}, ...]},
+ *     {company: ..., total: total number of genres, petals: [{genre: genreName, score: percentage of works with specified genre}, ...]},
  * ]
  */
 function buildFlowers(companyList, movies) {
@@ -204,8 +204,7 @@ function buildFlowers(companyList, movies) {
         let petals = [];
         if (totalGenres > 0) {
             for (const [genre, cnt] of genreCount.entries()) {
-                const share = cnt / totalGenres;             // [0,1]
-                const score = share * 2 - 1;                 // [-1,1]
+                const score = cnt / totalGenres;             // [0,1]
                 petals.push({ genre, score });
             }
             petals.sort((a, b) => d3.descending(a.score, b.score));
@@ -340,7 +339,7 @@ function drawFlowers(flowers) {
         .attr("text-anchor","middle")
         .style("fill","#ffffff")
         .style("font-size", labelFontSize)
-        .text("# of works (stem height)");
+        .text("total # of works produced by studio (stem height)");
     
     // Flower containers
     const flowerG = g.selectAll(".flower")
@@ -379,7 +378,7 @@ function drawFlowers(flowers) {
                 .attr("stroke", originalStroke)
                 .attr("stroke-width", 1);
             
-            petal.append("title").text(`${p.genre}: score ${p.score.toFixed(2)}`);
+            petal.append("title").text(`${p.genre}: score ${(p.score * 100).toFixed(2)}%`);
             
             // tooltip interactions
             petal.on("mouseover", function(event) {
@@ -402,7 +401,7 @@ function drawFlowers(flowers) {
                     .attr("stroke-width", 2);
                 
                 tooltip.style("visibility", "visible")
-                    .html(`<strong>${p.genre}</strong><br>Pop Score: ${p.score.toFixed(2)}`);
+                    .html(`<strong>${p.genre}</strong><br>Percentage of works with this genre: ${(p.score * 100).toFixed(2)}%`);
             })
                 .on("mousemove", function(event) {
                     tooltip.style("top", (event.pageY - 10) + "px")
@@ -428,7 +427,28 @@ function drawFlowers(flowers) {
     flowerG.append("circle")
         .attr("cy", d => -stemH(d.total))
         .attr("r", 12)
-        .attr("fill", "#ffffff").attr("stroke","#b98a1e");
+        .attr("fill", "#ffffff").attr("stroke","#b98a1e")
+        .on("mouseover", function(event, d) {
+            d3.select(this)
+                .transition().duration(200)
+                .attr("r", 16)
+                .attr("stroke", "#ffda6a");
+            
+            tooltip.style("visibility", "visible")
+                .html(`<strong>${d.company}</strong><br>Total # of Works: <span style="color:#7ed998">${d.total}</span>`);
+        })
+        .on("mousemove", function(event) {
+            tooltip.style("top", (event.pageY - 10) + "px")
+                .style("left", (event.pageX + 15) + "px");
+        })
+        .on("mouseout", function() {
+            d3.select(this)
+                .transition().duration(200)
+                .attr("r", 12)
+                .attr("stroke", "#b98a1e");
+            
+            tooltip.style("visibility", "hidden");
+        });
     
     // Helper to subtly highlight petals belonging to the selected genre,
     // without dimming any other petals.
@@ -452,36 +472,6 @@ function drawFlowers(flowers) {
             .attr("stroke-width", 2.2)
             .style("filter", "drop-shadow(0 0 8px rgba(255, 218, 106, 0.9))");
     }
-    
-    // Draw pop score formula
-    const formulaY = innerH + (isMobile ? 40 : 50);
-    
-    const formulaText = g.append("text")
-        .attr("class", "formula-label")
-        .attr("x", innerW / 2)
-        .attr("y", formulaY)
-        .attr("text-anchor", "middle")
-        .style("font-family", "'Courier New', monospace")
-        .style("font-size", "12px")
-        .style("fill", "rgba(255, 255, 255, 1)");
-    
-    formulaText.append("tspan").text("Pop Score = ( ");
-    
-    formulaText.append("tspan")
-        .text("Genre Count")
-        // .style("fill", "#ff9e9e")
-        .style("fill", "rgba(255, 255, 255, 1)")
-        .style("font-weight", "bold");
-    
-    formulaText.append("tspan").text(" / ");
-    
-    formulaText.append("tspan")
-        .text("Total Works")
-        // .style("fill", "#7ed998")
-        .style("fill", "rgba(255, 255, 255, 1)")
-        .style("font-weight", "bold");
-    
-    formulaText.append("tspan").text(" ) × 2 - 1");
     
     // Expose a global hook so other parts of the page can trigger flower highlighting.
     window.highlightFlowerGenre = function(selectedGenre) {
