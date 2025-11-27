@@ -238,6 +238,8 @@
         gap: 8px;
         transition: transform 120ms ease, box-shadow 120ms ease,
           border-color 120ms ease, background 120ms ease;
+        position: relative;
+        z-index: 1;
       }
 
       .character-card:hover,
@@ -677,46 +679,64 @@
         // Character / genre select logic
         const cards = document.querySelectorAll(".character-card");
 
-        function selectCard(card) {
-          cards.forEach((c) => c.classList.remove("selected"));
-          card.classList.add("selected");
+          function selectCard(card) {
+              cards.forEach((c) => c.classList.remove("selected"));
+              card.classList.add("selected");
 
-          const genre = card.getAttribute("data-genre");
+              const genre = card.getAttribute("data-genre");
 
-          // Store the currently selected genre globally so other visualizations can react
-          window.selectedGenre = genre;
+              // Store the currently selected genre globally so other visualizations can react
+              window.selectedGenre = genre;
 
-          // Update sibling lineup highlight
-          if (siblingCards && siblingCards.length) {
-            siblingCards.forEach((sib) => {
-              if (sib.getAttribute("data-genre") === genre) {
-                sib.classList.add("is-you");
-              } else {
-                sib.classList.remove("is-you");
+              // Add animation: card grows and comes to front
+              card.style.transform = "scale(1.3)";
+              card.style.zIndex = "1000";
+              card.style.transition = "transform 0.5s ease, z-index 0s";
+
+              // Wait for animation, then scroll to next page
+              setTimeout(() => {
+                  // Reset card
+                  card.style.transform = "";
+                  card.style.zIndex = "";
+
+                  // Scroll to next page
+                  window.scrollTo({
+                      top: window.innerHeight * 2, // Page 3 (index 2)
+                      behavior: "smooth"
+                  });
+              }, 800); // Wait 800ms for animation
+
+              // Update sibling lineup highlight
+              if (siblingCards && siblingCards.length) {
+                  siblingCards.forEach((sib) => {
+                      if (sib.getAttribute("data-genre") === genre) {
+                          sib.classList.add("is-you");
+                      } else {
+                          sib.classList.remove("is-you");
+                      }
+                  });
               }
-            });
-          }
 
-          // Highlight the corresponding genre in the bubble chart, if it has loaded
-          if (typeof window.highlightBubbleGenre === "function") {
-            window.highlightBubbleGenre(genre);
-          }
+              // Highlight the corresponding genre in the bubble chart, if it has loaded
+              if (typeof window.highlightBubbleGenre === "function") {
+                  window.highlightBubbleGenre(genre);
+              }
 
-          // Highlight the corresponding genre in the line chart, if it has loaded
-          if (typeof window.highlightLineGenre === "function") {
-            window.highlightLineGenre(genre);
-          }
+              // Highlight the corresponding genre in the line chart, if it has loaded
+              if (typeof window.highlightLineGenre === "function") {
+                  window.highlightLineGenre(genre);
+              }
 
-          // Highlight the corresponding genre in the spiral visualization, if it has loaded
-          if (typeof window.highlightSpiralGenre === "function") {
-            window.highlightSpiralGenre(genre);
-          }
+              // Highlight the corresponding genre in the spiral visualization, if it has loaded
+              if (typeof window.highlightSpiralGenre === "function") {
+                  window.highlightSpiralGenre(genre);
+              }
 
-          // Highlight the corresponding genre in the flowers visualization, if it has loaded
-          if (typeof window.highlightFlowerGenre === "function") {
-            window.highlightFlowerGenre(genre);
+              // Highlight the corresponding genre in the flowers visualization, if it has loaded
+              if (typeof window.highlightFlowerGenre === "function") {
+                  window.highlightFlowerGenre(genre);
+              }
           }
-        }
 
         cards.forEach((card) => {
           card.addEventListener("click", () => selectCard(card));
