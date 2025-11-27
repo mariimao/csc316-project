@@ -775,25 +775,21 @@ body::after {
     background: linear-gradient(180deg, #1a0a00 0%, #000000 100%);
     border-radius: 12px;
     display: block;
-    margin: 0 auto;
+    margin: 20px auto;
     min-height: 600px;
+    max-width: 1200px;
+    width: 100%;
 }
 
-.kernel {
-    cursor: pointer;
+/* Fix bucket z-index so popcorn appears on top */
+.popcorn-bucket {
+    position: relative;
+    z-index: 1;
 }
 
-.kernel:hover .popped-corn {
-    filter: brightness(1.2);
-}
-
-.popped-corn {
-    animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+.kernels {
+    position: relative;
+    z-index: 2;
 }
 
 .kernel-label {
@@ -801,6 +797,7 @@ body::after {
     text-anchor: middle;
     pointer-events: none;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.9);
+    fill: #fff;
 }
 
 .popularity-bar {
