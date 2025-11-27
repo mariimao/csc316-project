@@ -69,9 +69,10 @@
     );
     const maxWeeks = d3.max(countryTotals.values()) || 1;
 
-    const colorScale = d3.scaleLinear()
+    // Neutral, blue-toned color scale instead of bright Netflix red
+    const colorScale = d3.scaleSequential()
       .domain([0, Math.log1p(maxWeeks)])
-      .range(["#F6B3B0", netflixRed]);
+      .interpolator(t => d3.interpolateBlues(0.7));
 
     // Draw countries
     const paths = svg.selectAll("path")
@@ -79,23 +80,33 @@
       .join("path")
       .attr("fill", d => {
         const total = countryTotals.get(d.properties.name);
-        return total ? colorScale(Math.log1p(total)) : "#eeeeee";
+        // Countries with no data are clearly inactive
+        return total
+          ? colorScale(Math.log1p(total))
+          : "#3b3b3b";
+      })
+      .attr("fill-opacity", d => {
+        const total = countryTotals.get(d.properties.name);
+        return total ? 1 : 0.35;
       })
       .attr("stroke", "#fff")
       .attr("stroke-width", 0.5)
       .attr("d", path)
+      .style("cursor", d => countryTotals.get(d.properties.name) ? "pointer" : "default")
       .on("mouseover", (event, d) => {
         const shows = countryShows.get(d.properties.name) || [];
+        // Do not show tooltip for inactive (no-data) countries
+        if (!shows.length) {
+          tooltip.style("opacity", 0);
+          return;
+        }
         tooltip.style("opacity", 1)
           .html(`
-            <div style="border-bottom:2px solid ${netflixRed}; padding-bottom:4px; margin-bottom:6px;">
+            <div style="border-bottom:2px solid white; padding-bottom:4px; margin-bottom:6px;">
               <strong style="font-size:14px;">${d.properties.name}</strong>
               <strong style="font-size:14px;">'s Top 10 Favorite Shows </strong>
             </div>
-            ${shows.length 
-              ? shows.map((s,i) => `<div style="margin-bottom:2px;">${i+1}. <span style="color:${netflixRed}">${s.title}</span> (${s.weeks} weeks)</div>`).join("")
-              : "<div style='color:#ccc;'>No Netflix data</div>"
-            }
+            ${shows.map((s,i) => `<div style="margin-bottom:2px; color:#bcbcbc;">${i+1}. <span style="color:white">${s.title}</span> (${s.weeks} weeks at the top)</div>`).join("")}
           `);
       })
       .on("mousemove", event => {
@@ -103,6 +114,7 @@
                .style("top", (event.pageY - 15) + "px");
       })
       .on("mouseout", () => tooltip.style("opacity", 0));
+
 
     // Country search input, for later if we want to make the map more interactive
     // const searchContainer = d3.select("body")
