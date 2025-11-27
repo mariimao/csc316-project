@@ -122,6 +122,18 @@
             .text(`${i}%`);
     }
 
+    // Y-axis label
+    const yLabelY = floorY - ANIMATION_CONFIG.maxPopHeight / 2;
+    svg.append('text')
+        .attr('class', 'y-axis-label')
+        .attr('x', 20)
+        .attr('y', yLabelY)
+        .attr('fill', '#D4C5B0')
+        .attr('font-size', '12px')
+        .attr('text-anchor', 'middle')
+        .attr('transform', `rotate(-90 20 ${yLabelY})`)
+        .text('Popularity');
+
     // Create kernels group (above bucket)
     const kernelsGroup = svg.append('g').attr('class', 'kernels');
 
