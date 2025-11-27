@@ -617,6 +617,112 @@
       .start-button:hover {
         cursor: url("assets/link-select.png"), pointer;
       }
+      /* Scroll Indicator */
+      .scroll-indicator {
+          position: fixed;
+          right: 30px;
+          top: 50%;
+          transform: translateY(-50%);
+          z-index: 100;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 30px;
+      }
+
+      .page-dots {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          align-items: center;
+      }
+
+      .page-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          border: 2px solid rgba(255, 255, 255, 0.5);
+          transition: all 0.3s ease;
+          cursor: pointer;
+      }
+
+      .page-dot:hover {
+          background: rgba(255, 255, 255, 0.5);
+          transform: scale(1.2);
+      }
+
+      .page-dot.active {
+          background: #ffda6a;
+          border-color: #ffda6a;
+          box-shadow: 0 0 10px rgba(255, 218, 106, 0.5);
+          height: 20px;
+          border-radius: 5px;
+      }
+
+      .scroll-arrow {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          animation: bounce 2s infinite;
+      }
+
+      .arrow-icon {
+          font-size: 32px;
+          color: #ffda6a;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      }
+
+      .scroll-text {
+          font-size: 23px;
+          color: rgba(255, 255, 255, 0.8);
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+          letter-spacing: 2px;
+      }
+
+      @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+              transform: translateY(0);
+          }
+          40% {
+              transform: translateY(-10px);
+          }
+          60% {
+              transform: translateY(-5px);
+          }
+      }
+
+      /* Hide on last page */
+      .scroll-indicator.hide-arrow .scroll-arrow {
+          opacity: 0;
+      }
+
+      @media (max-width: 768px) {
+          .scroll-indicator {
+              right: 15px;
+              gap: 20px;
+          }
+
+          .page-dot {
+              width: 8px;
+              height: 8px;
+          }
+
+          .page-dot.active {
+              height: 16px;
+          }
+
+          .arrow-icon {
+              font-size: 24px;
+          }
+
+          .scroll-text {
+              font-size: 8px;
+          }
+      }
     </style>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -638,6 +744,45 @@
             }
           });
         }
+          // Create page dots
+          const pageDots = document.getElementById('pageDots');
+          const scrollIndicator = document.querySelector('.scroll-indicator');
+
+          pages.forEach((page, index) => {
+              const dot = document.createElement('div');
+              dot.className = 'page-dot';
+              dot.setAttribute('data-page', index);
+              dot.addEventListener('click', () => {
+                  window.scrollTo({ top: window.innerHeight * index, behavior: 'smooth' });
+              });
+              pageDots.appendChild(dot);
+          });
+
+// Update dots on scroll
+          function updateScrollIndicator() {
+              const scrollPosition = window.scrollY;
+              const viewportHeight = window.innerHeight;
+              const currentPageIndex = Math.round(scrollPosition / viewportHeight);
+
+              // Update active dot
+              document.querySelectorAll('.page-dot').forEach((dot, index) => {
+                  if (index === currentPageIndex) {
+                      dot.classList.add('active');
+                  } else {
+                      dot.classList.remove('active');
+                  }
+              });
+
+              // Hide arrow on last page
+              if (currentPageIndex >= pages.length - 1) {
+                  scrollIndicator.classList.add('hide-arrow');
+              } else {
+                  scrollIndicator.classList.remove('hide-arrow');
+              }
+          }
+
+          window.addEventListener('scroll', updateScrollIndicator);
+          updateScrollIndicator(); // Initial call
 
         window.addEventListener("scroll", updateActivePage);
         window.addEventListener("resize", updateActivePage);
@@ -737,7 +882,6 @@
                   window.highlightFlowerGenre(genre);
               }
           }
-
         cards.forEach((card) => {
           card.addEventListener("click", () => selectCard(card));
           card.addEventListener("keydown", (event) => {
@@ -1221,5 +1365,15 @@
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+        <div class="page-dots" id="pageDots"></div>
+        <div class="scroll-arrow">
+            <div class="arrow-icon">↓</div>
+            <div class="scroll-text">Go to Next page</div>
+        </div>
+    </div>
+
+    <!-- Right before </body> -->
   </body>
 </html>
