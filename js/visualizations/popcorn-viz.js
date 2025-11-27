@@ -221,11 +221,13 @@
 
     // Show fortune cookie modal in center of screen
     function showFortuneCookieModal(genre) {
-        console.log('🥠 Showing fortune cookie for:', genre);
+        console.log(' Showing fortune cookie for:', genre);
 
         // Get random movie recommendation
         const movies = MOVIE_RECOMMENDATIONS[genre];
         const movie = movies[Math.floor(Math.random() * movies.length)];
+
+        console.log('Selected movie:', movie); // Debug log
 
         // Create modal overlay
         const modal = document.createElement('div');
@@ -233,17 +235,17 @@
 
         // Create fortune content
         modal.innerHTML = `
-            <div class="fortune-content">
-                <div class="cookie-half cookie-left" style="background-color: ${GENRE_COLORS[genre]}; border: 3px solid #8B7355;"></div>
-                <div class="cookie-half cookie-right" style="background-color: ${GENRE_COLORS[genre]}; border: 3px solid #8B7355;"></div>
-                <div class="fortune-slip">
-                    <h2>${movie.title}</h2>
-                    <div class="year">(${movie.year})</div>
-                    <div class="tagline">"${movie.tagline}"</div>
-                    <div class="icon">🎬</div>
-                </div>
+        <div class="fortune-content">
+            <div class="cookie-half cookie-left" style="background-color: ${GENRE_COLORS[genre]}; border: 3px solid #8B7355;"></div>
+            <div class="cookie-half cookie-right" style="background-color: ${GENRE_COLORS[genre]}; border: 3px solid #8B7355;"></div>
+            <div class="fortune-slip">
+                <h2>${movie.title}</h2>
+                <div class="year">(${movie.year})</div>
+                <div class="tagline">"${movie.tagline}"</div>
+                <div class="icon">🎬</div>
             </div>
-        `;
+        </div>
+    `;
 
         document.body.appendChild(modal);
 
@@ -281,7 +283,6 @@
             }
         }, 5000);
     }
-
     // Pop single kernel - now pops OUT of bucket then moves to position
     function popSingleKernel(index) {
         const d = kernelData[index];
@@ -390,6 +391,27 @@
 
     console.log('✓ Popcorn Kernel Burst loaded');
 
-    // Auto-pop on load
-    setTimeout(popAllSequence, 1000);
+// Auto-pop when page becomes visible
+    function initPopcornWhenVisible() {
+        const popcornPage = document.querySelector('#popcorn-stage').closest('.page');
+        if (!popcornPage) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                    setTimeout(popAllSequence, 500);
+                    observer.disconnect(); // Only trigger once
+                }
+            });
+        }, { threshold: 0.5 });
+
+        observer.observe(popcornPage);
+    }
+
+// Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPopcornWhenVisible);
+    } else {
+        initPopcornWhenVisible();
+    }
 })();
