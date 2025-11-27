@@ -1,21 +1,25 @@
 /**
  * Flowers Visualization
  * Code assisted by ChatGPT 5
- * 
+ *
  * This module handles:
  * - Loading and preparing movie data
  * - Building flower data structures
  * - Drawing the flowers visualization
  */
 
+
 let tmdbMovies = [];
+
+let activeCompanies = ["Marvel Studios", "Warner Bros. Pictures", "Paramount"];
+let allAvailableCompanies = [];
 
 // Map the broader character-selection genres into the movie genres
 // used in this flowers visualization.
 function mapGenreForFlowers(selectedGenre) {
     if (!selectedGenre) return null;
     const g = String(selectedGenre).toLowerCase();
-
+    
     if (g.includes("action")) return "Action";
     if (g.includes("sci-fi") || g.includes("sci fi") || g.includes("science")) return "Science Fiction";
     if (g.includes("fantasy")) return "Fantasy";
@@ -29,7 +33,7 @@ function mapGenreForFlowers(selectedGenre) {
     if (g.includes("horror")) return "Horror";
     if (g.includes("romance")) return "Romance";
     if (g.includes("thriller")) return "Thriller";
-
+    
     return null;
 }
 
@@ -42,13 +46,93 @@ function loadFlowersData() {
             tmdbMovies = prepareMovies(raw);
             console.log("movies:", tmdbMovies.length);
             // Placeholder companies (this data should come from user's choice)
-            const companies = ["Marvel Studios", "Warner Bros. Pictures", "Paramount"];
-            const flowers = buildFlowers(companies, tmdbMovies);
-            console.log(flowers);
-            drawFlowers(flowers);
+            // const companies = ["Marvel Studios", "Warner Bros. Pictures", "Paramount"];
+            // const flowers = buildFlowers(companies, tmdbMovies);
+            // console.log(flowers);
+            // drawFlowers(flowers);
+            initCompanyList(tmdbMovies);
+            renderTags();
+            updateVisualization();
         })
         .catch(console.error);
 }
+
+
+function initCompanyList(movies) {
+    const companyMap = new Map();
+    
+    movies.forEach(m => {
+        if(m.production_companies) {
+            m.production_companies.forEach(c => {
+                const cleanName = c.trim();
+                companyMap.set(cleanName, (companyMap.get(cleanName) || 0) + 1);
+            });
+        }
+    });
+    
+    // filter companies with at least 5 movies
+    allAvailableCompanies = Array.from(companyMap.entries())
+        .filter(([name, count]) => count >= 5)
+        .map(([name, count]) => name)
+        .sort();
+    
+    const datalist = d3.select("#company-list");
+    datalist.selectAll("option").remove();
+    
+    allAvailableCompanies.forEach(company => {
+        datalist.append("option").attr("value", company);
+    });
+}
+
+function updateVisualization() {
+    if (activeCompanies.length === 0) {
+        d3.select("#garden").select("svg").remove();
+        return;
+    }
+    
+    const flowers = buildFlowers(activeCompanies, tmdbMovies);
+    drawFlowers(flowers);
+}
+
+function renderTags() {
+    const container = d3.select("#active-tags");
+    
+    const tags = container.selectAll(".company-tag")
+        .data(activeCompanies, d => d); // key function important
+    
+    // Exit
+    tags.exit().remove();
+    
+    // Enter
+    const tagsEnter = tags.enter().append("div")
+        .attr("class", "company-tag")
+        .style("background", "rgba(255, 255, 255, 0.1)")
+        .style("border", "1px solid #7ed998")
+        .style("color", "#fff")
+        .style("padding", "4px 10px")
+        .style("border-radius", "15px")
+        .style("font-size", "14px")
+        .style("cursor", "pointer")
+        .style("user-select", "none")
+        .attr("title", "Click to remove");
+    
+    tagsEnter.text(d => d);
+    
+    tagsEnter.append("span")
+        .text(" ✕")
+        .style("font-weight", "bold")
+        .style("margin-left", "6px")
+        .style("color", "#ff6b6b");
+    
+    // Click to remove
+    tagsEnter.on("click", function(e, d) {
+        activeCompanies = activeCompanies.filter(c => c !== d);
+        renderTags();
+        updateVisualization();
+    });
+}
+
+
 
 /**
  * Prepare movie data by parsing and converting types
@@ -64,7 +148,8 @@ function prepareMovies(rows) {
                 if (Array.isArray(arr)) return arr.map(x => String(x).trim());
             } catch (e) {}
         }
-        return s === "" ? [] : s.split("|").map(x => x.trim()).filter(Boolean);
+        // return s === "" ? [] : s.split("|").map(x => x.trim()).filter(Boolean);
+        return s === "" ? [] : s.split(/,|\|/).map(x => x.trim()).filter(Boolean);
     };
     
     rows.forEach(d => {
@@ -84,7 +169,7 @@ function prepareMovies(rows) {
 
 /**
  * Build flowers data structure from companies and movies
- * 
+ *
  * Returns flowers in the structure of:
  * [
  *     {company: ..., total: total number of genres, petals: [{genre: genreName, score: normalized average popularity of the genres}, ...]},
@@ -166,6 +251,21 @@ function drawFlowers(flowers) {
         left: isMobile ? 40 : 60
     };
     
+    // Add tooltip
+    d3.select(".flower-tooltip").remove();
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "flower-tooltip")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("background", "rgba(0, 0, 0, 0.85)")
+        .style("color", "#fff")
+        .style("padding", "8px 12px")
+        .style("border-radius", "6px")
+        .style("font-size", "12px")
+        .style("pointer-events", "none")
+        .style("z-index", "9999")
+        .style("border", "1px solid rgba(255,255,255,0.2)");
+    
     // Clear any existing SVG
     d3.select("#garden").select("svg").remove();
     
@@ -180,35 +280,44 @@ function drawFlowers(flowers) {
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
     const innerW = W - margin.left - margin.right;
     const innerH = H - margin.top - margin.bottom;
-
+    
     // ==== Scales and axes ====
     // x：companies in alphabetical order
     const x = d3.scalePoint()
         .domain(flowers.map(d => d.company).sort(d3.ascending))
         .range([0, innerW]).padding(0.5);
-
+    
     // stem height: total number of works
     const stemH = d3.scaleLog()
         .domain([1, d3.max(flowers, d => d.total) + 1]).nice()
         .range([40, innerH - 80]);
-
+    
     // color: by genre popularity
-    const color = d3.scaleDiverging()
-        .domain([-1, 0, 1])
-        .interpolator(t => d3.interpolatePRGn(t));
-
+    // const color = d3.scaleDiverging()
+    //     .domain([-1, 0, 1])
+    //     .interpolator(t => d3.interpolatePRGn(t));
+    // const color = d3.scaleOrdinal(d3.schemeTableau10);
+    // const color = d3.scaleOrdinal([...d3.schemeTableau10, ...d3.schemeSet3]);
+    
+    const allGenres = Array.from(new Set(flowers.flatMap(d => d.petals.map(p => p.genre)))).sort();
+    const distinctColors = d3.quantize(d3.interpolateSpectral, allGenres.length + 1);
+    const color = d3.scaleOrdinal()
+        .domain(allGenres)
+        .range(distinctColors);
+    
     // Customize petal size by number of petals
     const petalWidth = (k) => d3.scaleLinear().domain([3, 12]).range([10, 20])(k);
     const petalLen   = (k) => d3.scaleLinear().domain([3, 12]).range([35, 65])(k);
-
+    
     // ==== company names ====
     const axisFontSize = isMobile ? "12px" : "16px";
     g.append("g").attr("transform", `translate(0,${innerH})`)
         .call(d3.axisBottom(x))
         .selectAll("text")
         .attr("dy", "1.25em")
+        .style("font-family", "bitregular")
         .style("font-size", axisFontSize);
-
+    
     // // y axis as number of works
     // g.append("g")
     //     .call(d3.axisLeft(stemH).ticks(5))
@@ -232,14 +341,14 @@ function drawFlowers(flowers) {
         .style("fill","#ffffff")
         .style("font-size", labelFontSize)
         .text("# of works (stem height)");
-
+    
     // Flower containers
     const flowerG = g.selectAll(".flower")
         .data(flowers.sort((a,b)=>d3.ascending(a.company,b.company)))
         .join("g")
         .attr("class","flower")
         .attr("transform", d => `translate(${x(d.company)}, ${innerH})`);
-
+    
     // Draw stems
     flowerG.append("line")
         .attr("y1", 0)
@@ -247,7 +356,7 @@ function drawFlowers(flowers) {
         .attr("stroke", "#7ed998")
         .attr("stroke-width", 2)
         .attr("stroke-linecap", "round");
-
+    
     // Flower petals
     flowerG.each(function(d){
         const k = d.petals.length;
@@ -256,40 +365,85 @@ function drawFlowers(flowers) {
         const group = d3.select(this).append("g").attr("transform",`translate(0,${baseY})`);
         d.petals.forEach((p, i) => {
             const angle = (i / k) * 360;
-            group.append("ellipse")
+            const originalFill = color(p.genre);
+            const originalStroke = d3.color(originalFill).darker(0.8);
+            
+            const petal = group.append("ellipse")
                 .attr("class", "flower-petal")
                 .attr("data-genre", p.genre)
                 .attr("cx", 0).attr("cy", -ry*0.7)
                 .attr("rx", rx).attr("ry", ry)
                 .attr("transform", `rotate(${angle})`)
-                .attr("fill", color(p.score))
-                .attr("fill-opacity", 0.85)
-                .attr("stroke", d3.color(color(p.score)).darker(0.8))
-                .attr("stroke-width", 1)
-                .append("title").text(`${p.genre}: score ${p.score.toFixed(2)}`);
+                .attr("fill", originalFill)
+                .attr("fill-opacity", 1)
+                .attr("stroke", originalStroke)
+                .attr("stroke-width", 1);
+            
+            petal.append("title").text(`${p.genre}: score ${p.score.toFixed(2)}`);
+            
+            // tooltip interactions
+            petal.on("mouseover", function(event) {
+                
+                const hoveredGenre = p.genre;
+                
+                // dim all petals
+                d3.selectAll(".flower-petal")
+                    .style("opacity", 0.2);
+                
+                // restore opacity of petals of the same genre
+                d3.selectAll(`.flower-petal[data-genre="${hoveredGenre}"]`)
+                    .style("opacity", 1)
+                    .attr("stroke-width", 1.5);
+                
+                // highlight the hovered petal
+                d3.select(this)
+                    .style("opacity", 1)
+                    .attr("stroke", "#ffffff")
+                    .attr("stroke-width", 2);
+                
+                tooltip.style("visibility", "visible")
+                    .html(`<strong>${p.genre}</strong><br>Pop Score: ${p.score.toFixed(2)}`);
+            })
+                .on("mousemove", function(event) {
+                    tooltip.style("top", (event.pageY - 10) + "px")
+                        .style("left", (event.pageX + 15) + "px");
+                })
+                .on("mouseout", function() {
+                    d3.selectAll(".flower-petal")
+                        .style("opacity", 1)
+                        .attr("stroke-width", 1)
+                        .attr("stroke", function() {
+                            const g = d3.select(this).attr("data-genre");
+                            const c = color(g);
+                            return d3.color(c).darker(0.8);
+                        });
+                    
+                    tooltip.style("visibility", "hidden");
+                });
+            
         });
     });
-
+    
     // Flower centers
     flowerG.append("circle")
         .attr("cy", d => -stemH(d.total))
         .attr("r", 12)
         .attr("fill", "#ffffff").attr("stroke","#b98a1e");
-
+    
     // Helper to subtly highlight petals belonging to the selected genre,
     // without dimming any other petals.
     function applyFlowerHighlight(selectedGenre) {
         const mapped = mapGenreForFlowers(selectedGenre);
-
+        
         const petals = svg.selectAll(".flower-petal");
-
+        
         // Reset all petals
         petals
             .attr("stroke-width", 1)
             .style("filter", "none");
-
+        
         if (!mapped) return;
-
+        
         // Highlight petals whose genre matches the mapped genre
         petals
             .filter(function() {
@@ -298,18 +452,81 @@ function drawFlowers(flowers) {
             .attr("stroke-width", 2.2)
             .style("filter", "drop-shadow(0 0 8px rgba(255, 218, 106, 0.9))");
     }
-
+    
+    // Draw pop score formula
+    const formulaY = innerH + (isMobile ? 40 : 50);
+    
+    const formulaText = g.append("text")
+        .attr("class", "formula-label")
+        .attr("x", innerW / 2)
+        .attr("y", formulaY)
+        .attr("text-anchor", "middle")
+        .style("font-family", "'Courier New', monospace")
+        .style("font-size", "12px")
+        .style("fill", "rgba(255, 255, 255, 1)");
+    
+    formulaText.append("tspan").text("Pop Score = ( ");
+    
+    formulaText.append("tspan")
+        .text("Genre Count")
+        // .style("fill", "#ff9e9e")
+        .style("fill", "rgba(255, 255, 255, 1)")
+        .style("font-weight", "bold");
+    
+    formulaText.append("tspan").text(" / ");
+    
+    formulaText.append("tspan")
+        .text("Total Works")
+        // .style("fill", "#7ed998")
+        .style("fill", "rgba(255, 255, 255, 1)")
+        .style("font-weight", "bold");
+    
+    formulaText.append("tspan").text(" ) × 2 - 1");
+    
     // Expose a global hook so other parts of the page can trigger flower highlighting.
     window.highlightFlowerGenre = function(selectedGenre) {
         applyFlowerHighlight(selectedGenre);
     };
-
+    
     // If the user already picked a genre before the flowers finished loading,
     // apply that highlight immediately.
     if (window.selectedGenre) {
         applyFlowerHighlight(window.selectedGenre);
     }
 }
+
+window.handleAddCompany = function() {
+    const input = document.getElementById("company-search");
+    const val = input.value.trim();
+    
+    if (!val) return;
+    
+    // 0. Restrict number of active companies to 5
+    if (activeCompanies.length >= 5) {
+        alert("Garden is full! Maximum 5 studios allowed.\n(Please remove one first to add more.)");
+        return;
+    }
+    
+    // 1. Check if company is already in the active list
+    if (activeCompanies.includes(val)) {
+        alert("This studio is already in the garden!");
+        input.value = "";
+        return;
+    }
+    
+    // 2. Check if the company has at least some movies in the dataset
+    activeCompanies.push(val);
+    input.value = "";
+    
+    renderTags();
+    updateVisualization();
+};
+
+document.getElementById("company-search")?.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        window.handleAddCompany();
+    }
+});
 
 // Initialize on load
 loadFlowersData();
