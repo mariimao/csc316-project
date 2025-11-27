@@ -26,6 +26,12 @@ setTimeout(() => {
     const innerWidth = Math.max(200, width - margin.left - margin.right);
     const innerHeight = Math.max(150, height - margin.top - margin.bottom);
 
+    d3.select("#lineChart")
+        .append("p")
+        .attr("class", "subtitle")
+        .style("margin-bottom", "-10px")
+        .text("Number of shows started per year by genre");
+
     const svg = d3.select("#lineChart")
         .append("svg")
         .attr("width", "100%")
@@ -131,11 +137,11 @@ setTimeout(() => {
 
         // drop points before the startYear so lines begin where all 10 genres appear
         series.forEach(s => {
-            s.points = s.points.filter(p => p.year >= startYear);
+            s.points = s.points.filter(p => p.year >= 2000);
         });
 
         // if filtering removed all points for a series, keep it empty (won't draw)
-        const effectiveMinYear = startYear;
+        const effectiveMinYear = 2000;
         const effectiveMaxYear = maxYear;
         // compute y max based on counts (number of shows)
         const maxCount = d3.max(series, s => d3.max(s.points, p => p.count)) || 1;
@@ -196,11 +202,12 @@ setTimeout(() => {
             .attr("class", "genre");
 
         genreGroup.append("path")
-            .attr("class", "line")
+            .datum(d => d)
+            .attr("class", d => `line line-${d.genre.replace(/[^a-zA-Z0-9_-]/g, '-')}`)
             .attr("d", d => line(d.points))
             .style("fill", "none")
             .style("stroke", d => color(d.genre))
-            .style("stroke-width", 2.5)
+            .style("stroke-width", 1.5)
             .style("opacity", 0.95);
 
         // circles (use count)
@@ -208,6 +215,7 @@ setTimeout(() => {
             .data(d => d.points.map(p => ({ genre: d.genre, year: p.year, count: p.count })))
             .enter()
             .append("circle")
+            .attr("class", d => `point point-${d.genre.replace(/[^a-zA-Z0-9_-]/g, '-')}`)
             .attr("cx", d => xScale(new Date(d.year,0,1)))
             .attr("cy", d => yScale(d.count))
             .attr("r", 3.5)
@@ -240,14 +248,15 @@ setTimeout(() => {
             });
 
         // title (reflects count)
-        svg.append("text")
-            .attr("x", margin.left)
-            .attr("y", margin.top / 2)
-            .attr("text-anchor", "start")
-            .style("fill", "#ffffff")
-            .style("font-family", "sans-serif")
-            .style("font-size", `${Math.max(14, Math.min(18, width / 50))}px`)
-            .text("Number of shows started per year by genre");
+        // svg.append("text")
+        //     .attr("x", margin.left)
+        //     .attr("y", margin.top / 2)
+        //     .attr("class", "subtitle")
+        //     .attr("text-anchor", "start")
+        //     .style("fill", "#ffffff")
+        //     .style("font-family", "sans-serif")
+        //     .style("font-size", `${Math.max(14, Math.min(18, width / 50))}px`)
+        //     .text("Number of shows started per year by genre");
 
         // data source
         svg.append("text")
@@ -271,11 +280,19 @@ setTimeout(() => {
             .attr("transform", (d, i) => `translate(0, ${i * 20})`)
             .style("cursor", "pointer")
             .on("click", function(event, d) {
-                // toggle visibility
-                const visible = d3.selectAll(`path.line`).filter(p => p.genre === d.genre).style("display") !== "none";
-                d3.select(this).select("text").style("opacity", visible ? 0.4 : 1);
-                d3.selectAll(`path.line`).filter(p => p.genre === d.genre).style("display", visible ? "none" : null);
-                d3.selectAll("circle").filter(p => p.genre === d.genre).style("display", visible ? "none" : null);
+                const cls = d.genre.replace(/[^a-zA-Z0-9_-]/g, '-');
+                const currentlyVisible = d3.select(`.line-${cls}`).style("display") !== "none";
+
+                // fade legend text
+                d3.select(this).select("text").style("opacity", currentlyVisible ? 0.4 : 1);
+
+                // toggle line
+                d3.selectAll(`.line-${cls}`)
+                    .style("display", currentlyVisible ? "none" : null);
+
+                // toggle points
+                d3.selectAll(`.point-${cls}`)
+                    .style("display", currentlyVisible ? "none" : null);
             });
 
         legendItem.append("rect")
