@@ -30,7 +30,7 @@ setTimeout(() => {
         .append("p")
         .attr("class", "subtitle")
         .style("margin-bottom", "-10px")
-        .text("Number of shows started per year by genre");
+        .text("Genre Popularity Over Time");
 
     const svg = d3.select("#lineChart")
         .append("svg")
