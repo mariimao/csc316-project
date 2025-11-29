@@ -1,4 +1,8 @@
-# csc316-project
+# CSC316 Project: Battle of the Genres
+
+Project can be accessed here: https://mariimao.github.io/csc316-project/
+
+Demo video: placeholder TODO
 
 Data was pulled on: 2025-10-07
 
@@ -69,4 +73,12 @@ Data was pulled on: 2025-10-07
 |--------|-----------------|------------------|------------------|------------------|------------|--------------|---------|-------|--------------------------------------------|----------------|---------------|-------------------------------------------|----------------|-----------------|------------|--------------------------------------------|----------|--------|------------------|---------------------------------|------------------------|-----------|--------------------|----------------|-----------------|---------------------------------------------------------------------|--------------------------------------------|----------------|
 | 1399   | Game of Thrones | 8                | 73               | en               | 21857      | 8.442        | Seven noble families fight for control of the mythical land of Westeros. Friction between the houses leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond. | False | /2OMB0ynKlyIenMJWI2Dy9IWT4c.jpg | 2011-04-17     | 2019-05-19    | http://www.hbo.com/game-of-thrones     | False          | Game of Thrones | 1083.917  | /1XS1oqL89opfnbLl8WnZY1O1uJx.jpg       | Scripted | Ended  | Winter Is Coming   | Sci-Fi & Fantasy, Drama, Action & Adventure | David Benioff, D.B. Weiss | en        | HBO                | US             | English         | Revolution Sun Studios, Television 360, Generator Entertainment, Bighead Littlehead | United Kingdom, United States of America   | 0              |
 | 71446  | Money Heist     | 3                | 41               | es               | 17836      | 8.257        | To carry out the biggest heist in history, a mysterious man called The Professor recruits a band of eight robbers who have a single characteristic: none of them has anything to lose. Five months of seclusion - memorizing every step, every detail, every probability - culminate in eleven days locked up in the National Coinage and Stamp Factory of Spain, surrounded by police forces and with dozens of hostages in their power, to find out whether their suicide wager will lead to everything or nothing. | False | /gFZriCkpJYsApPZEF3jhxL4yLzG.jpg | 2017-05-02     | 2021-12-03    | https://www.netflix.com/title/80192098 | False          | La Casa de Papel | 96.354    | /reEMJA1uzscCbkpeRJeTT2bjqUp.jpg       | Scripted | Ended  | The perfect robbery. | Crime, Drama                       | Álex Pina              | es        | Netflix, Antena 3   | ES             | Español         | Vancouver Media                                                    | Spain                                      | 70             |
+
+
+# Overview of Project Code
+<!-- The README file must give an overview of what you are handing in: which parts are your code, 
+which parts are libraries, and so on. -->
+
+# Guide to Usage
+<!-- Explain non-obvious features of our interface -->
 
