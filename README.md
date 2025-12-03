@@ -2,7 +2,7 @@
 
 Project can be accessed here: https://mariimao.github.io/csc316-project/
 
-Demo video: placeholder TODO
+[Demo video](https://drive.google.com/file/d/1exada7YGlKzDvxtC18_nx6f63DOEssug/view?usp=sharing)
 
 ## Dataset Sources
 Data was pulled on: 2025-10-07
@@ -64,8 +64,32 @@ which parts are libraries, and so on. -->
 *   **`index.html`**: The main webpage structure of the project.
 *   **`README.md`**: Project documentation for the project you are reading now.
 
+This project is built based on standard web technologies - HTML, CSS, and Javascript - and 
+utilizes the D3.js library for data visualization tasks.
+
+All css, js, and html files are code written by the project members with the assistance of Generative AI including
+ChatGPT and Gemini. No further libraries are used except D3.
+
+Image assets under `/assets/` are non-commercial resources from free repositories.
+
 ## Guide to Usage
 <!-- Explain non-obvious features of our interface -->
+
+### Connected Scatter Plot (Genre Popularity Over Time)
+- Hover on any data point to view the specific number of shows in that genre for that year.
+- Click on a color block in the legend to hide or display any line corresponding to that genre.
+- The chosen documentary is highlighted in the legend.
+
+### Flower Visualization (Production Company and the Genres ...)
+- Each flower represents a production company, with the petals indicating the top 10 genres they chose.
+- The proportion of each genre decreases as you move clockwise, where the upright petal represents the most chosen genre.
+- Use the selection box at the top to choose or type in a production company. Companies are listed in alphabetical order.
+Can select at most 5 companies.
+- Hover over any petal to see the petals corresponding to that genre for all flowers, if applicable.
+Petals corresponding to the same genre have the same color.
+- Hover over the center of each flower to see the total number of works used to calculate the proportions
+for each company.
+
 ### Interactive Popcorn Visualization (How to use it to get a movie/show recommendation)
 1. Start the Pop: Click the Pop! button to start the pop animation.
 2. Once the popcorns are generated, click on a piece of popcorn to get a random movie or show recommendation associated with that genre.
