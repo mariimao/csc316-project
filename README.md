@@ -75,6 +75,8 @@ Image assets under `/assets/` are non-commercial resources from free repositorie
 ## Guide to Usage
 <!-- Explain non-obvious features of our interface -->
 
+Run the project by opening `index.html` in a web browser, preferably Google Chrome or Firefox.
+
 ### Connected Scatter Plot (Genre Popularity Over Time)
 - Hover on any data point to view the specific number of shows in that genre for that year.
 - Click on a color block in the legend to hide or display any line corresponding to that genre.
