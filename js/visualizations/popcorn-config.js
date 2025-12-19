@@ -9,8 +9,6 @@ const GENRE_COLORS = {
     'Horror': '#A77B5B',
     'Documentary': '#9370DB'
 };
-
-// Sample data - replace with your Netflix data
 const GENRE_DATA = [
     { genre: 'Drama', popularity: 92, shows: 45, avgRating: 8.5 },
     { genre: 'Comedy', popularity: 85, shows: 38, avgRating: 8.2 },
@@ -28,26 +26,39 @@ const ANIMATION_CONFIG = {
     kernelSize: 12,
     maxPopHeight: 400
 };
-
-// Movie recommendations for fortune cookie feature
 const MOVIE_RECOMMENDATIONS = {
     'Drama': [
         { title: 'The Shawshank Redemption', year: 1994, tagline: 'Hope springs eternal' },
         { title: 'Parasite', year: 2019, tagline: 'Class warfare masterpiece' },
         { title: 'Moonlight', year: 2016, tagline: 'Coming-of-age poetry' },
-        { title: 'The Godfather', year: 1972, tagline: 'An offer you cannot refuse' }
+        { title: 'The Godfather', year: 1972, tagline: 'An offer you cannot refuse' },
+        { title: 'Everything Everywhere All at Once', year: 2022, tagline: 'Multiverse family drama' },
+        { title: 'The Power of the Dog', year: 2021, tagline: 'Toxic masculinity explored' },
+        { title: 'Nomadland', year: 2020, tagline: 'Life on the road' },
+        { title: 'Past Lives', year: 2023, tagline: 'Love across lifetimes' },
+        { title: 'Oppenheimer', year: 2023, tagline: 'Father of the atomic bomb' }
     ],
     'Comedy': [
         { title: 'Grand Budapest Hotel', year: 2014, tagline: 'Whimsical adventure awaits' },
         { title: 'Superbad', year: 2007, tagline: 'One night of chaos' },
         { title: 'Knives Out', year: 2019, tagline: 'Murder mystery laughs' },
-        { title: 'Bridesmaids', year: 2011, tagline: 'Friendship and mayhem' }
+        { title: 'Bridesmaids', year: 2011, tagline: 'Friendship and mayhem' },
+        { title: 'Everything Everywhere All at Once', year: 2022, tagline: 'Absurdist multiverse comedy' },
+        { title: 'Glass Onion', year: 2022, tagline: 'Mystery on a Greek island' },
+        { title: 'Barbie', year: 2023, tagline: 'Life in plastic' },
+        { title: 'The Menu', year: 2022, tagline: 'Fine dining gone wrong' },
+        { title: 'Booksmart', year: 2019, tagline: 'One wild night' }
     ],
     'Action': [
         { title: 'Mad Max: Fury Road', year: 2015, tagline: 'Witness the chaos' },
         { title: 'John Wick', year: 2014, tagline: 'Never mess with his dog' },
         { title: 'The Dark Knight', year: 2008, tagline: 'Why so serious?' },
-        { title: 'Inception', year: 2010, tagline: 'Dreams within dreams' }
+        { title: 'Inception', year: 2010, tagline: 'Dreams within dreams' },
+        { title: 'Top Gun: Maverick', year: 2022, tagline: 'Feel the need for speed' },
+        { title: 'Mission: Impossible - Dead Reckoning', year: 2023, tagline: 'Ultimate impossible mission' },
+        { title: 'Dune: Part Two', year: 2024, tagline: 'Desert power rises' },
+        { title: 'The Batman', year: 2022, tagline: 'Vengeance in Gotham' },
+        { title: 'Spider-Man: No Way Home', year: 2021, tagline: 'Multiverse mayhem' }
     ],
     'Thriller': [
         { title: 'Se7en', year: 1995, tagline: 'Whats in the box?' },

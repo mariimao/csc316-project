@@ -706,6 +706,7 @@
           opacity: 0;
       }
 
+
       @media (max-width: 768px) {
           .scroll-indicator {
               right: 15px;
@@ -729,6 +730,104 @@
               font-size: 8px;
           }
       }
+      /* Team Credits Page */
+      .team-lineup {
+          margin-top: 80px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: flex-end;
+          gap: 80px;
+          max-width: 1200px;
+          margin-left: auto;
+          margin-right: auto;
+      }
+
+      .team-member {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+          animation: teamBob 2s ease-in-out infinite alternate;
+      }
+
+      .team-member:nth-child(1) {
+          animation-duration: 1.8s;
+      }
+
+      .team-member:nth-child(2) {
+          animation-duration: 2.2s;
+      }
+
+      .team-member:nth-child(3) {
+          animation-duration: 2.0s;
+      }
+
+      .team-member:nth-child(4) {
+          animation-duration: 1.9s;
+      }
+
+      .team-member:nth-child(5) {
+          animation-duration: 2.1s;
+      }
+
+      .team-sprite {
+          width: 200px;
+          height: 200px;
+          image-rendering: pixelated;
+          object-fit: contain;
+          display: block;
+          filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
+      }
+
+      .team-name {
+          font-size: 18px;
+          font-weight: bold;
+          color: #ffda6a;
+          text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.8);
+          text-align: center;
+          max-width: 250px;
+          line-height: 1.3;
+      }
+
+      .team-role {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.8);
+          text-align: center;
+          max-width: 250px;
+          line-height: 1.5;
+      }
+      .page:has(.team-lineup) .page-content {
+          padding-top: 80px;
+      }
+
+      @keyframes teamBob {
+          from {
+              transform: translateY(0);
+          }
+          to {
+              transform: translateY(-20px);
+          }
+      }
+
+      @media (max-width: 768px) {
+          .team-lineup {
+              gap: 40px;
+          }
+
+          .team-sprite {
+              width: 120px;
+              height: 120px;
+          }
+
+          .team-name {
+              font-size: 14px;
+          }
+
+          .team-role {
+              font-size: 10px;
+          }
+      }
     </style>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -736,20 +835,32 @@
         const spacers = document.querySelectorAll(".scroll-spacer");
         const totalPages = pages.length;
         const siblingCards = document.querySelectorAll(".sibling-card");
+          let popcornTriggered = false;
 
-        function updateActivePage() {
-          const scrollPosition = window.scrollY;
-          const viewportHeight = window.innerHeight;
-          const currentPageIndex = Math.round(scrollPosition / viewportHeight);
+          function updateActivePage() {
+              const scrollPosition = window.scrollY;
+              const viewportHeight = window.innerHeight;
+              const currentPageIndex = Math.round(scrollPosition / viewportHeight);
 
-          pages.forEach((page, index) => {
-            if (index === currentPageIndex) {
-              page.classList.add("active");
-            } else {
-              page.classList.remove("active");
-            }
-          });
-        }
+              pages.forEach((page, index) => {
+                  if (index === currentPageIndex) {
+                      page.classList.add("active");
+
+                      // Trigger popcorn animation when popcorn page becomes active (only once)
+                      if (index === 7 && !popcornTriggered && typeof window.popAllSequence === "function") {
+                          popcornTriggered = true; // Mark as triggered
+                          setTimeout(() => {
+                              window.resetPopcorn(); // Reset first
+                              setTimeout(() => {
+                                  window.popAllSequence(); // Then pop
+                              }, 100);
+                          }, 300);
+                      }
+                  } else {
+                      page.classList.remove("active");
+                  }
+              });
+          }
           // Create page dots
           const pageDots = document.getElementById('pageDots');
           const scrollIndicator = document.querySelector('.scroll-indicator');
@@ -1398,8 +1509,64 @@
           </p>
           </div>
       </div>
+        <!-- Page: Team Credits with Characters -->
+        <div class="page">
+            <div class="page-content">
+                <h1 class="bubble-page-heading">The Team Behind the Story</h1>
 
+                <div class="team-lineup">
+                    <div class="team-member">
+                        <img
+                                src="assets/characters/download20251105140617.png"
+                                alt="Kelly Du"
+                                class="team-sprite"
+                        />
+                        <div class="team-name">Kelly Du</div>
+                        <div class="team-role">Data Visualization and overall development</div>
+                    </div>
 
+                    <div class="team-member">
+                        <img
+                                src="assets/characters/download20251105140657.png"
+                                alt="Anisa Hosseinpour Khoshghalb"
+                                class="team-sprite"
+                        />
+                        <div class="team-name">Anisa Hosseinpour Khoshghalb</div>
+                        <div class="team-role">Data Visualization and overall development</div>
+                    </div>
+
+                    <div class="team-member">
+                        <img
+                                src="assets/characters/download20251105140807.png"
+                                alt="Julia Zhong Guo"
+                                class="team-sprite"
+                        />
+                        <div class="team-name">Julia Zhong Guo</div>
+                        <div class="team-role">Data Visualization and overall development</div>
+                    </div>
+
+                    <div class="team-member">
+                        <img
+                                src="assets/characters/download20251105140745.png"
+                                alt="Mary Zhao"
+                                class="team-sprite"
+                        />
+                        <div class="team-name">Mary Zhao</div>
+                        <div class="team-role">Data Visualization and overall development</div>
+                    </div>
+
+                    <div class="team-member">
+                        <img
+                                src="assets/characters/download20251105140720.png"
+                                alt="Trentin Maur"
+                                class="team-sprite"
+                        />
+                        <div class="team-name">Trentin Maur</div>
+                        <div class="team-role">Data Visualization and overall development</div>
+                    </div>
+                </div>
+            </div>
+        </div>
       <!-- Page 13: Credits -->
       <div class="page">
         <div class="page-content">
@@ -1446,6 +1613,7 @@
     </div>
 
     <!-- Invisible spacers to create scroll height -->
+    <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
     <div class="scroll-spacer"></div>
